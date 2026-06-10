@@ -25,41 +25,43 @@ export async function POST(req: NextRequest) {
       .eq('tenant_id', TENANT_ID)
       .single()
 
-    if (!config) {
+    const cfg = config as any
+
+    if (!cfg) {
       return NextResponse.json({ error: 'Configuración no encontrada' }, { status: 500 })
     }
 
     const tieneCredenciales =
-      config.andreani_usuario &&
-      config.andreani_password &&
-      config.andreani_codigo_cliente &&
-      config.andreani_contrato_dom &&
-      config.andreani_cp_origen
+      cfg.andreani_usuario &&
+      cfg.andreani_password &&
+      cfg.andreani_codigo_cliente &&
+      cfg.andreani_contrato_dom &&
+      cfg.andreani_cp_origen
 
     // ── Sin credenciales: devolver tarifa fallback ──────────
     if (!tieneCredenciales) {
       return NextResponse.json({
-        costo: config.andreani_tarifa_fallback ?? 0,
+        costo: cfg.andreani_tarifa_fallback ?? 0,
         modo: 'fallback',
       })
     }
 
     // ── Con credenciales: llamar a la API de Andreani ───────
-    const BASE_URL = config.andreani_sandbox
+    const BASE_URL = cfg.andreani_sandbox
       ? 'https://api.qa.andreani.com'
       : 'https://api.andreani.com'
 
     // 1. Login → obtener token de sesión
     const loginRes = await fetch(`${BASE_URL}/login`, {
       headers: {
-        Authorization: `Basic ${Buffer.from(`${config.andreani_usuario}:${config.andreani_password}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`${cfg.andreani_usuario}:${cfg.andreani_password}`).toString('base64')}`,
       },
     })
 
     if (!loginRes.ok) {
       console.error('Andreani login failed:', loginRes.status)
       return NextResponse.json({
-        costo: config.andreani_tarifa_fallback ?? 0,
+        costo: cfg.andreani_tarifa_fallback ?? 0,
         modo: 'fallback',
         error: 'No se pudo autenticar con Andreani',
       })
@@ -68,7 +70,7 @@ export async function POST(req: NextRequest) {
     const token = loginRes.headers.get('x-authorization-token')
     if (!token) {
       return NextResponse.json({
-        costo: config.andreani_tarifa_fallback ?? 0,
+        costo: cfg.andreani_tarifa_fallback ?? 0,
         modo: 'fallback',
         error: 'Token no recibido de Andreani',
       })
@@ -76,12 +78,12 @@ export async function POST(req: NextRequest) {
 
     // 2. Armar parámetros de cotización
     //    Un bulto por pedido: peso = peso_default * cantidad_items
-    const pesoTotal = (config.andreani_peso_default_g ?? 500) * (cantidad_items ?? 1)
+    const pesoTotal = (cfg.andreani_peso_default_g ?? 500) * (cantidad_items ?? 1)
     const pesoKg = Math.max(pesoTotal / 1000, 0.1) // mínimo 100g
 
     const params = new URLSearchParams({
-      contrato: config.andreani_contrato_dom!,
-      cliente: config.andreani_codigo_cliente!,
+      contrato: cfg.andreani_contrato_dom!,
+      cliente: cfg.andreani_codigo_cliente!,
       codigoPostal: String(codigo_postal),
       'bultos[0][kilos]': String(pesoKg.toFixed(2)),
       'bultos[0][largoCm]': '20',
@@ -100,7 +102,7 @@ export async function POST(req: NextRequest) {
     if (!cotizarRes.ok) {
       console.error('Andreani cotizar failed:', cotizarRes.status, await cotizarRes.text())
       return NextResponse.json({
-        costo: config.andreani_tarifa_fallback ?? 0,
+        costo: cfg.andreani_tarifa_fallback ?? 0,
         modo: 'fallback',
         error: 'Error al cotizar en Andreani',
       })
@@ -110,7 +112,7 @@ export async function POST(req: NextRequest) {
 
     // La respuesta trae tarifas — tomamos la primera (suele ser la estándar)
     // Estructura típica: { tarifas: [{ tarifa: number, ... }] } o directo { tarifa: number }
-    let costo: number = config.andreani_tarifa_fallback ?? 0
+    let costo: number = cfg.andreani_tarifa_fallback ?? 0
 
     if (Array.isArray(cotizacion)) {
       costo = cotizacion[0]?.tarifa ?? cotizacion[0]?.tarifaConIva ?? costo
