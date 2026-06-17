@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
       // Usuario autenticado → el customer.id = auth.uid()
       customerId = user.id
 
-      // Actualizar datos del customer si cambió algo
+      // Solo crear el customer si no existe todavía — no sobreescribir datos en cada pedido.
+      // Las actualizaciones de perfil se hacen desde /cuenta, no desde el checkout.
       await supabase.from('customers').upsert({
         id: user.id,
         tenant_id: TENANT_ID,
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
         address_city: addressCity || null,
         address_province: addressProvince || null,
         address_zip: addressZip || null,
-      }, { onConflict: 'id', ignoreDuplicates: false })
+      }, { onConflict: 'id', ignoreDuplicates: true })
     } else {
       // Usuario anónimo → buscar por email o crear nuevo
       const { data: existing } = await supabase
