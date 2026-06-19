@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useCart } from '@/components/shop/CartContext'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import Link from 'next/link'
-import { ArrowLeft, CreditCard, Building2, ImageOff, Check, Loader2 } from 'lucide-react'
+import { ArrowLeft, CreditCard, Building2, ImageOff, Check } from 'lucide-react'
 import { createClient, TENANT_ID } from '@/lib/supabase'
 
 const formatPrice = (n: number) =>
@@ -29,80 +29,35 @@ export default function CheckoutPage() {
   const [addressCity, setAddressCity] = useState('')
   const [addressProvince, setAddressProvince] = useState('')
   const [addressZip, setAddressZip] = useState('')
-  const [shippingMethod, setShippingMethod] = useState('pickup')
+  const [shippingMethod, setShippingMethod] = useState('')
+  const [shippingCost, setShippingCost] = useState(0)
   const [notes, setNotes] = useState('')
   const [copied, setCopied] = useState<'alias' | 'cbu' | null>(null)
 
-  // ── Andreani cotización ─────────────────────────────────
-  const [shippingCost, setShippingCost] = useState(0)
-  const [cotizandoFlete, setCotizandoFlete] = useState(false)
-  const [fleteError, setFleteError] = useState<string | null>(null)
-  const [fleteModo, setFleteModo] = useState<'api' | 'fallback' | null>(null)
-  const cotizarDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
   useEffect(() => {
     supabase.from('store_config')
-      .select('mp_enabled, transfer_enabled, transfer_cbu, transfer_alias, oca_enabled, andreani_enabled, pickup_enabled, whatsapp_number, min_order_amount, custom_shipping')
+      .select('mp_enabled, transfer_enabled, transfer_cbu, transfer_alias, whatsapp_number, min_order_amount, custom_shipping')
       .eq('tenant_id', TENANT_ID)
       .single()
-      .then(({ data }) => setStoreConfig(data))
+      .then(({ data }) => {
+        setStoreConfig(data)
+        // Auto-select first active shipping method
+        const methods = ((data as any)?.custom_shipping ?? []).filter((m: any) => m.active && m.name)
+        if (methods.length > 0) {
+          setShippingMethod('custom_0')
+          setShippingCost(methods[0].price ?? 0)
+        }
+      })
   }, [])
 
-  // Cotizar Andreani automáticamente cuando hay CP válido
-  useEffect(() => {
-    if (shippingMethod !== 'andreani') {
-      setShippingCost(0)
-      setFleteError(null)
-      setFleteModo(null)
-      return
-    }
+  const activeCustomMethods: any[] = ((storeConfig as any)?.custom_shipping ?? []).filter((m: any) => m.active && m.name)
+  const selectedMethodIdx = shippingMethod.startsWith('custom_') ? Number(shippingMethod.split('_')[1]) : -1
+  const selectedMethod = selectedMethodIdx >= 0 ? activeCustomMethods[selectedMethodIdx] : null
 
-    const cpValido = addressZip.match(/^\d{4}$/)
-    if (!cpValido) {
-      setShippingCost(0)
-      setFleteError(null)
-      return
-    }
-
-    if (cotizarDebounceRef.current) clearTimeout(cotizarDebounceRef.current)
-
-    cotizarDebounceRef.current = setTimeout(async () => {
-      setCotizandoFlete(true)
-      setFleteError(null)
-      try {
-        const res = await fetch('/api/andreani/cotizar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            codigo_postal: addressZip,
-            cantidad_items: items.reduce((acc, i) => acc + i.quantity, 0),
-          }),
-        })
-        const data = await res.json()
-        if (data.error && data.costo === undefined) {
-          setFleteError('No se pudo calcular el flete')
-          setShippingCost(0)
-        } else {
-          setShippingCost(data.costo ?? 0)
-          setFleteModo(data.modo ?? null)
-          if (data.error) setFleteError(data.error)
-        }
-      } catch {
-        setFleteError('Error al calcular el flete')
-        setShippingCost(0)
-      } finally {
-        setCotizandoFlete(false)
-      }
-    }, 600)
-  }, [shippingMethod, addressZip, items])
-
-  // Resetear costo si cambia el método de envío
-  useEffect(() => {
-    if (shippingMethod !== 'andreani' && !shippingMethod.startsWith('custom_')) setShippingCost(0)
-  }, [shippingMethod])
+  // Hide address for pickup-type methods (name contains "retiro")
+  const isPickup = selectedMethod?.name?.toLowerCase().includes('retiro')
 
   const totalConEnvio = total + shippingCost
-
   const minOrder: number | null = storeConfig?.min_order_amount ?? null
   const meetsMin = !minOrder || total >= minOrder
 
@@ -114,10 +69,6 @@ export default function CheckoutPage() {
     }
     if (!fullName.trim()) { setError('El nombre es obligatorio'); return }
     if (!email.trim()) { setError('El email es obligatorio'); return }
-    if (shippingMethod === 'andreani' && !addressZip.match(/^\d{4}$/)) {
-      setError('Ingresá un código postal válido (4 dígitos) para calcular el envío')
-      return
-    }
     setError(null)
     setStep('pago')
   }
@@ -346,117 +297,61 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Método de envío */}
-                  <div className="space-y-4 pt-2">
-                    <p className="text-xs tracking-[0.2em] uppercase text-[var(--color-stone)]">Método de envío</p>
-                    <div className="space-y-2">
-                      {storeConfig?.pickup_enabled && (
-                        <label className={`flex items-center gap-3 p-4 border cursor-pointer transition-colors ${shippingMethod === 'pickup' ? 'border-[var(--color-charcoal)]' : 'border-[var(--color-border)] hover:border-[var(--color-stone)]'}`}>
-                          <input type="radio" name="shipping" value="pickup" checked={shippingMethod === 'pickup'} onChange={() => setShippingMethod('pickup')} className="accent-[var(--color-charcoal)]" />
-                          <div>
-                            <p className="text-sm font-light text-[var(--color-charcoal)]">Retiro en local</p>
-                            <p className="text-xs text-[var(--color-stone)]">Sin costo de envío</p>
-                          </div>
-                        </label>
-                      )}
-                      {storeConfig?.oca_enabled && (
-                        <label className={`flex items-center gap-3 p-4 border cursor-pointer transition-colors ${shippingMethod === 'oca' ? 'border-[var(--color-charcoal)]' : 'border-[var(--color-border)] hover:border-[var(--color-stone)]'}`}>
-                          <input type="radio" name="shipping" value="oca" checked={shippingMethod === 'oca'} onChange={() => setShippingMethod('oca')} className="accent-[var(--color-charcoal)]" />
-                          <div>
-                            <p className="text-sm font-light text-[var(--color-charcoal)]">OCA</p>
-                            <p className="text-xs text-[var(--color-stone)]">Envío a domicilio</p>
-                          </div>
-                        </label>
-                      )}
-                      {storeConfig?.andreani_enabled && (
-                        <label className={`flex items-center gap-3 p-4 border cursor-pointer transition-colors ${shippingMethod === 'andreani' ? 'border-[var(--color-charcoal)]' : 'border-[var(--color-border)] hover:border-[var(--color-stone)]'}`}>
-                          <input type="radio" name="shipping" value="andreani" checked={shippingMethod === 'andreani'} onChange={() => setShippingMethod('andreani')} className="accent-[var(--color-charcoal)]" />
-                          <div className="flex-1">
-                            <p className="text-sm font-light text-[var(--color-charcoal)]">Andreani</p>
-                            <p className="text-xs text-[var(--color-stone)]">Envío a domicilio</p>
-                          </div>
-                          {/* Indicador de costo en tiempo real */}
-                          {shippingMethod === 'andreani' && (
-                            <div className="ml-auto flex-shrink-0 text-right">
-                              {cotizandoFlete ? (
-                                <span className="flex items-center gap-1 text-xs text-[var(--color-stone)]">
-                                  <Loader2 size={12} className="animate-spin" /> Calculando...
-                                </span>
-                              ) : shippingCost > 0 ? (
-                                <span className="text-sm font-light text-[var(--color-charcoal)]">
-                                  {formatPrice(shippingCost)}
-                                  {fleteModo === 'fallback' && <span className="block text-xs text-[var(--color-stone)]">tarifa estimada</span>}
-                                </span>
-                              ) : addressZip.match(/^\d{4}$/) ? (
-                                <span className="text-xs text-[var(--color-stone)]">Gratis</span>
-                              ) : null}
-                            </div>
-                          )}
-                        </label>
-                      )}
-                      {/* Métodos de envío personalizados */}
-                      {((storeConfig as any)?.custom_shipping ?? [])
-                        .filter((m: any) => m.active && m.name)
-                        .map((m: any, i: number) => {
+                  {activeCustomMethods.length > 0 && (
+                    <div className="space-y-4 pt-2">
+                      <p className="text-xs tracking-[0.2em] uppercase text-[var(--color-stone)]">Método de envío</p>
+                      <div className="space-y-2">
+                        {activeCustomMethods.map((m: any, i: number) => {
                           const val = `custom_${i}`
                           return (
                             <label key={i} className={`flex items-center gap-3 p-4 border cursor-pointer transition-colors ${shippingMethod === val ? 'border-[var(--color-charcoal)]' : 'border-[var(--color-border)] hover:border-[var(--color-stone)]'}`}>
-                              <input type="radio" name="shipping" value={val} checked={shippingMethod === val} onChange={() => { setShippingMethod(val); setShippingCost(m.price ?? 0) }} className="accent-[var(--color-charcoal)]" />
+                              <input
+                                type="radio"
+                                name="shipping"
+                                value={val}
+                                checked={shippingMethod === val}
+                                onChange={() => { setShippingMethod(val); setShippingCost(m.price ?? 0) }}
+                                className="accent-[var(--color-charcoal)]"
+                              />
                               <div className="flex-1">
                                 <p className="text-sm font-light text-[var(--color-charcoal)]">{m.name}</p>
                               </div>
-                              <span className="text-sm font-light text-[var(--color-charcoal)]">{m.price > 0 ? formatPrice(m.price) : 'Gratis'}</span>
+                              <span className="text-sm font-light text-[var(--color-charcoal)]">
+                                {(m.price ?? 0) > 0 ? formatPrice(m.price) : 'Gratis'}
+                              </span>
                             </label>
                           )
-                        })
-                      }
-                    </div>
-
-                    {/* Error de cotización */}
-                    {shippingMethod === 'andreani' && fleteError && (
-                      <p className="text-xs text-amber-600">{fleteError} — se usará tarifa estimada.</p>
-                    )}
-
-                    {/* Dirección (si no es retiro en local) */}
-                    {shippingMethod !== 'pickup' && (
-                      <div className="grid grid-cols-2 gap-4 pt-2">
-                        <div className="col-span-2">
-                          <label className="block text-xs text-[var(--color-stone)] mb-1.5">Calle y número</label>
-                          <input className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors" value={addressStreet} onChange={e => setAddressStreet(e.target.value)} placeholder="Av. Corrientes 1234" />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-[var(--color-stone)] mb-1.5">Ciudad</label>
-                          <input className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors" value={addressCity} onChange={e => setAddressCity(e.target.value)} placeholder="Buenos Aires" />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-[var(--color-stone)] mb-1.5">Provincia</label>
-                          <input className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors" value={addressProvince} onChange={e => setAddressProvince(e.target.value)} placeholder="Buenos Aires" />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-[var(--color-stone)] mb-1.5">
-                            Código postal {shippingMethod === 'andreani' && <span className="text-[var(--color-charcoal)]">*</span>}
-                          </label>
-                          <input
-                            className={`w-full px-3 py-2.5 border bg-white text-sm focus:outline-none transition-colors ${
-                              shippingMethod === 'andreani' && addressZip && !addressZip.match(/^\d{4}$/)
-                                ? 'border-red-300 focus:border-red-400'
-                                : 'border-[var(--color-border)] focus:border-[var(--color-charcoal)]'
-                            }`}
-                            value={addressZip}
-                            onChange={e => setAddressZip(e.target.value)}
-                            placeholder="1000"
-                            maxLength={4}
-                          />
-                          {shippingMethod === 'andreani' && (
-                            <p className="text-xs text-[var(--color-stone)] mt-1">
-                              {addressZip.match(/^\d{4}$/)
-                                ? cotizandoFlete ? '⏳ Calculando flete...' : '✓ Flete calculado'
-                                : 'Ingresá 4 dígitos para calcular el flete'}
-                            </p>
-                          )}
-                        </div>
+                        })}
                       </div>
-                    )}
-                  </div>
+
+                      {/* Dirección (oculta para retiro en local) */}
+                      {!isPickup && (
+                        <div className="grid grid-cols-2 gap-4 pt-2">
+                          <div className="col-span-2">
+                            <label className="block text-xs text-[var(--color-stone)] mb-1.5">Calle y número</label>
+                            <input className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors" value={addressStreet} onChange={e => setAddressStreet(e.target.value)} placeholder="Av. Corrientes 1234" />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-[var(--color-stone)] mb-1.5">Ciudad</label>
+                            <input className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors" value={addressCity} onChange={e => setAddressCity(e.target.value)} placeholder="Buenos Aires" />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-[var(--color-stone)] mb-1.5">Provincia</label>
+                            <input className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors" value={addressProvince} onChange={e => setAddressProvince(e.target.value)} placeholder="Buenos Aires" />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-[var(--color-stone)] mb-1.5">Código postal</label>
+                            <input
+                              className="w-full px-3 py-2.5 border border-[var(--color-border)] bg-white text-sm focus:outline-none focus:border-[var(--color-charcoal)] transition-colors"
+                              value={addressZip}
+                              onChange={e => setAddressZip(e.target.value)}
+                              placeholder="1000"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Notas */}
                   <div>
@@ -468,10 +363,10 @@ export default function CheckoutPage() {
 
                   <button
                     onClick={handleContinuar}
-                    disabled={cotizandoFlete || !meetsMin}
+                    disabled={!meetsMin}
                     className="w-full py-4 bg-[var(--color-charcoal)] text-white text-xs tracking-[0.2em] uppercase hover:bg-[var(--color-stone)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {cotizandoFlete ? 'Calculando flete...' : 'Continuar →'}
+                    Continuar →
                   </button>
                 </div>
               )}
@@ -541,15 +436,10 @@ export default function CheckoutPage() {
                     <span>Subtotal</span>
                     <span>{formatPrice(total)}</span>
                   </div>
-                  {shippingMethod !== 'pickup' && (
+                  {selectedMethod && (
                     <div className="flex justify-between items-center text-xs text-[var(--color-stone)]">
-                      <span>Envío ({shippingMethod === 'andreani' ? 'Andreani' : shippingMethod === 'oca' ? 'OCA' : 'Envío'})</span>
-                      <span>
-                        {cotizandoFlete
-                          ? <span className="flex items-center gap-1"><Loader2 size={10} className="animate-spin" /> ...</span>
-                          : shippingCost > 0 ? formatPrice(shippingCost) : 'Gratis'
-                        }
-                      </span>
+                      <span>Envío ({selectedMethod.name})</span>
+                      <span>{shippingCost > 0 ? formatPrice(shippingCost) : 'Gratis'}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center pt-2 border-t border-[var(--color-border)]">
