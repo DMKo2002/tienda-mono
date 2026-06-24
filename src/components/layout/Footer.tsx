@@ -8,14 +8,11 @@ interface Branch {
 
 interface FooterProps {
   storeName?: string
-  address?: string
-  phone?: string
   whatsapp?: string
   email?: string
   instagramUrl?: string
   facebookUrl?: string
   tiktokUrl?: string
-  pickupAddress?: string
   branches?: Branch[]
 }
 
@@ -54,14 +51,11 @@ function IconWhatsApp() {
 
 export default function Footer({
   storeName = 'TIENDA',
-  address = '',
-  phone = '',
   whatsapp = '',
   email = '',
   instagramUrl,
   facebookUrl,
   tiktokUrl,
-  pickupAddress,
   branches = [],
 }: FooterProps) {
   const hasSocial = instagramUrl || facebookUrl || tiktokUrl || whatsapp
@@ -72,14 +66,12 @@ export default function Footer({
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
 
-          {/* Brand + social */}
+          {/* Marca + social */}
           <div className="md:col-span-1">
             <p className="font-display text-2xl font-light tracking-[0.2em] uppercase text-white mb-4">
               {storeName}
             </p>
-            <p className="text-xs leading-relaxed text-white/50 mb-5">
-              Estilo que trasciende tendencia.
-            </p>
+            <p className="text-xs leading-relaxed text-white/50 mb-5">Estilo que trasciende tendencia.</p>
             {hasSocial && (
               <div className="flex items-center gap-3">
                 {instagramUrl && (
@@ -110,19 +102,11 @@ export default function Footer({
           <div>
             <p className="text-xs tracking-[0.15em] uppercase text-white mb-5">Tienda</p>
             <ul className="space-y-3">
-              {[
-                { href: '/tienda', label: 'Todos los productos' },
-              ].map(l => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-xs text-white/50 hover:text-white transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
+              <li><Link href="/tienda" className="text-xs text-white/50 hover:text-white transition-colors">Todos los productos</Link></li>
             </ul>
           </div>
 
-          {/* Sucursales o Contacto */}
+          {/* Sucursales o info */}
           <div>
             {hasBranches ? (
               <>
@@ -141,8 +125,6 @@ export default function Footer({
               <>
                 <p className="text-xs tracking-[0.15em] uppercase text-white mb-5">Contacto</p>
                 <ul className="space-y-3 text-xs text-white/50">
-                  {address && <li>{address}</li>}
-                  {phone && <li>{phone}</li>}
                   {whatsapp && (
                     <li>
                       <a href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`} className="hover:text-white transition-colors">
@@ -151,51 +133,25 @@ export default function Footer({
                     </li>
                   )}
                   {email && (
-                    <li>
-                      <a href={`mailto:${email}`} className="hover:text-white transition-colors uppercase">
-                        {email}
-                      </a>
-                    </li>
+                    <li><a href={`mailto:${email}`} className="hover:text-white transition-colors">{email}</a></li>
                   )}
                 </ul>
               </>
             )}
           </div>
 
-          {/* Contacto (cuando hay sucursales) */}
+          {/* Contacto */}
           <div>
-            <p className="text-xs tracking-[0.15em] uppercase text-white mb-5">Contacto</p>
+            <p className="text-xs tracking-[0.15em] uppercase text-white mb-5">Ayuda</p>
             <ul className="space-y-3 text-xs text-white/50">
+              <li><Link href="/contacto" className="hover:text-white transition-colors">Contacto</Link></li>
               {email && (
-                <li>
-                  <a href={`mailto:${email}`} className="hover:text-white transition-colors">
-                    {email}
-                  </a>
-                </li>
+                <li><a href={`mailto:${email}`} className="hover:text-white transition-colors">{email}</a></li>
               )}
-              {whatsapp && !hasBranches && null}
             </ul>
           </div>
 
         </div>
-
-        {/* Mapa de retiro */}
-        {pickupAddress && (
-          <div className="mt-12 pt-10 border-t border-white/10">
-            <p className="text-xs tracking-[0.15em] uppercase text-white mb-4">Punto de retiro</p>
-            <p className="text-xs text-white/50 mb-3">{pickupAddress}</p>
-            <div className="rounded-lg overflow-hidden h-52 w-full max-w-lg opacity-80">
-              <iframe
-                title="Mapa punto de retiro"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(pickupAddress)}&output=embed&z=15`}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-              />
-            </div>
-          </div>
-        )}
 
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-[10px] tracking-widest uppercase text-white/30">

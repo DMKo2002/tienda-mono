@@ -269,7 +269,6 @@ export default async function TiendaPage({ searchParams }: Props) {
         instagramUrl={config?.instagram_url ?? undefined}
         facebookUrl={config?.facebook_url ?? undefined}
         tiktokUrl={config?.tiktok_url ?? undefined}
-        pickupAddress={(config as any)?.pickup_enabled && config?.pickup_address ? config.pickup_address : undefined}
         branches={(config as any)?.branches ?? []}
       />
     </>
