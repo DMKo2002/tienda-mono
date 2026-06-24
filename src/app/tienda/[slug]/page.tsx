@@ -83,22 +83,27 @@ export default async function ProductoPage({ params }: Props) {
   })
   const storeName = tenant?.name ?? 'TIENDA'
 
-  // Price visibility check
+  // Price visibility check — use getSession to avoid cookie writes in Server Components
   const priceVisibility = (config as any)?.price_visibility ?? 'all'
-  let showPrices = true
+  let showPrices = priceVisibility === 'all'
   if (priceVisibility !== 'all') {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      showPrices = false
-    } else if (priceVisibility === 'wholesale_only') {
-      const { data: customer } = await supabase
-        .from('customers')
-        .select('type')
-        .eq('email', user.email ?? '')
-        .eq('tenant_id', TENANT_ID)
-        .single()
-      showPrices = customer?.type === 'wholesale'
-    }
+    try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const user = sessionData?.session?.user
+      if (user) {
+        if (priceVisibility === 'logged_in') {
+          showPrices = true
+        } else if (priceVisibility === 'wholesale_only') {
+          const { data: customer } = await supabase
+            .from('customers')
+            .select('type')
+            .eq('email', user.email ?? '')
+            .eq('tenant_id', TENANT_ID)
+            .single()
+          showPrices = customer?.type === 'wholesale'
+        }
+      }
+    } catch { showPrices = false }
   }
 
   // Agrupar variantes por talle y color

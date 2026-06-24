@@ -22,17 +22,18 @@ const STATUS_COLOR: Record<string, string> = {
 
 export default async function CuentaPage() {
   const supabase = await createServerSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: sessionData } = await supabase.auth.getSession()
+  const user = sessionData?.session?.user
 
   if (!user) redirect('/cuenta/login')
 
   const [{ data: config }, { data: tenant }, { data: customer }, { data: orders }] = await Promise.all([
     supabase.from('store_config').select('logo_url, whatsapp_number, notification_email').eq('tenant_id', TENANT_ID).single(),
     supabase.from('tenants').select('name').eq('id', TENANT_ID).single(),
-    supabase.from('customers').select('*').eq('id', user.id).single(),
+    supabase.from('customers').select('*').eq('id', user!.id).single(),
     supabase.from('orders')
       .select('id, status, total, shipping_cost, created_at, payment_method, order_items(product_name, quantity, unit_price)')
-      .eq('customer_id', user.id)
+      .eq('customer_id', user!.id)
       .order('created_at', { ascending: false })
       .limit(20),
   ])
@@ -53,7 +54,7 @@ export default async function CuentaPage() {
                 {isMayorista ? 'Cuenta Mayorista' : 'Mi Cuenta'}
               </p>
               <h1 className="font-display text-4xl font-light text-[var(--color-charcoal)]">
-                Hola, {customer?.full_name ?? user.email}
+                Hola, {customer?.full_name ?? user!.email}
               </h1>
               {isMayorista && customer?.company_name && (
                 <p className="text-sm text-[var(--color-stone)] mt-1">{customer.company_name}</p>
@@ -67,8 +68,8 @@ export default async function CuentaPage() {
             <div className="border border-[var(--color-border)] p-5">
               <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--color-stone)] mb-3">Datos personales</p>
               <div className="space-y-1 text-sm text-[var(--color-charcoal)] font-light">
-                <p>{customer?.full_name} {(customer as any)?.last_name ?? ''}</p>
-                <p className="text-[var(--color-stone)]">{user.email}</p>
+                <p>{customer?.full_name}</p>
+                <p className="text-[var(--color-stone)]">{user!.email}</p>
                 {customer?.phone && <p>{customer.phone}</p>}
               </div>
             </div>
@@ -86,9 +87,7 @@ export default async function CuentaPage() {
 
           {/* Pedidos */}
           <div>
-            <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--color-stone)] mb-5">
-              Mis pedidos
-            </p>
+            <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--color-stone)] mb-5">Mis pedidos</p>
 
             {(!orders || orders.length === 0) ? (
               <div className="border border-[var(--color-border)] py-16 text-center">
@@ -116,7 +115,6 @@ export default async function CuentaPage() {
                         {STATUS_LABEL[order.status] ?? order.status}
                       </span>
                     </div>
-
                     <div className="space-y-1 mb-3">
                       {order.order_items?.map((item: any, i: number) => (
                         <p key={i} className="text-sm font-light text-[var(--color-charcoal)]">
@@ -125,7 +123,6 @@ export default async function CuentaPage() {
                         </p>
                       ))}
                     </div>
-
                     <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border)]">
                       <p className="text-xs text-[var(--color-stone)] font-light capitalize">
                         {order.payment_method === 'mercadopago' ? 'MercadoPago' : 'Transferencia'}
