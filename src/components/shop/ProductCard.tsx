@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { ImageOff } from 'lucide-react'
 
@@ -153,6 +155,6 @@ export default function ProductCard({
           </div>
         )}
       </div>
-    </Link>
+        </Link>
   )
 }
