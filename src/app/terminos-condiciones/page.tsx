@@ -2,7 +2,7 @@ import { createServerSupabase, TENANT_ID } from '@/lib/supabase-server'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 
-export const metadata = { title: 'Términos y Condiciones' }
+export const metadata = { title: 'Términos y Condiciones', robots: { index: false, follow: false } }
 
 export default async function TermsPage() {
   const supabase = await createServerSupabase()
@@ -45,8 +45,4 @@ export default async function TermsPage() {
         instagramUrl={config?.instagram_url ?? undefined}
         facebookUrl={config?.facebook_url ?? undefined}
         tiktokUrl={config?.tiktok_url ?? undefined}
-        branches={(config as any)?.branches ?? []}
-      />
-    </>
-  )
-}
+        branches={(config 

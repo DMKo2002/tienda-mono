@@ -113,8 +113,31 @@ export default async function ProductoPage({ params }: Props) {
   const retailRule = product.variants?.[0]?.price_rules?.find((p: any) => p.type === 'retail' && p.active)
   const wholesaleRule = product.variants?.[0]?.price_rules?.find((p: any) => p.type === 'wholesale' && p.active)
 
+  const coverImage = images[0]?.url ?? null
+  const retailPrice = retailRule?.price
+  const jsonLd = {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description ?? `${product.name} — ${storeName}`,
+    image: coverImage ? [coverImage] : undefined,
+    sku: (product as any).sku ?? undefined,
+    offers: retailPrice ? {
+      '@type': 'Offer',
+      url: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/tienda/${product.slug}`,
+      priceCurrency: 'ARS',
+      price: retailPrice,
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: storeName },
+    } : undefined,
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar storeName={storeName} logoUrl={config?.logo_url} />
 
       <main className="pt-24 min-h-screen">

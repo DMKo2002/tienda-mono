@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { CartProvider } from '@/components/shop/CartContext'
+import CookieBanner from '@/components/layout/CookieBanner'
 
 export const metadata: Metadata = {
   title: { default: 'Tienda', template: '%s | Tienda' },
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="overflow-x-hidden">
         <CartProvider>
           {children}
+          <CookieBanner />
         </CartProvider>
         </body>
     </html>

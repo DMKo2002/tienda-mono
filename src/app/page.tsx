@@ -7,6 +7,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ProductCard from '@/components/shop/ProductCard'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
 export default async function HomePage() {
@@ -226,10 +227,12 @@ export default async function HomePage() {
                   }}
                 >
                   {imgUrl && (
-                    <img
-                      src={imgUrl}
+                    <Image
+                      src={imgUrl.split('?')[0]}
                       alt={`Mood ${i + 1}`}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 50vw, 25vw"
                     />
                   )}
                 </div>
