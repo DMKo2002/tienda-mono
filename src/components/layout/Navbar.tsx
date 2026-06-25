@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { ShoppingBag, Menu, X, Search, User, ChevronRight } from 'lucide-react'
+import { ShoppingBag, Menu, X, Search, User } from 'lucide-react'
 import { useCart } from '@/components/shop/CartContext'
 
 interface NavbarProps {
@@ -18,8 +18,7 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
-  const [tiendaOpen, setTiendaOpen] = useState(false)
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null)
+  const [megaOpen, setMegaOpen] = useState(false)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { count } = useCart()
 
@@ -33,21 +32,20 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
     fetch('/api/nav-categories').then(r => r.json()).then(setCategories).catch(() => {})
   }, [])
 
-  function openDropdown() {
+  function open() {
     if (closeTimer.current) clearTimeout(closeTimer.current)
-    setTiendaOpen(true)
+    setMegaOpen(true)
   }
 
-  function scheduleClose() {
-    closeTimer.current = setTimeout(() => {
-      setTiendaOpen(false)
-      setActiveCategory(null)
-    }, 150)
+  function close() {
+    closeTimer.current = setTimeout(() => setMegaOpen(false), 120)
   }
 
   function cancelClose() {
     if (closeTimer.current) clearTimeout(closeTimer.current)
   }
+
+  const headerHeight = scrolled ? 'top-[52px]' : 'top-[72px]'
 
   return (
     <>
@@ -62,81 +60,14 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
               Home
             </Link>
 
-            {/* Tienda + mega-menu */}
-            <div className="relative" onMouseEnter={openDropdown} onMouseLeave={scheduleClose}>
+            {/* Tienda trigger */}
+            <div onMouseEnter={open} onMouseLeave={close}>
               <Link
                 href="/tienda"
-                className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors"
+                className={`text-xs tracking-[0.15em] uppercase transition-colors ${megaOpen ? 'text-[var(--color-stone)]' : 'text-[var(--color-charcoal)] hover:text-[var(--color-stone)]'}`}
               >
                 Tienda
               </Link>
-
-              {tiendaOpen && categories.length > 0 && (
-                <div
-                  className="absolute top-full left-0 mt-4 bg-[var(--color-warm-white)] border border-[var(--color-border)] shadow-lg flex"
-                  onMouseEnter={cancelClose}
-                  onMouseLeave={scheduleClose}
-                >
-                  {/* Columna categorías */}
-                  <ul className="py-3 min-w-[190px]">
-                    <li>
-                      <Link
-                        href="/tienda"
-                        onClick={() => { setTiendaOpen(false); setActiveCategory(null) }}
-                        className="block px-5 py-2 text-xs tracking-[0.12em] uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] hover:bg-[var(--color-bg)] transition-colors"
-                      >
-                        Ver todo
-                      </Link>
-                    </li>
-                    <li><div className="border-t border-[var(--color-border)] my-1" /></li>
-                    {categories.map(cat => (
-                      <li key={cat.id} onMouseEnter={() => setActiveCategory(cat.subcategories.length > 0 ? cat : null)}>
-                        <Link
-                          href={`/tienda?cat=${cat.slug}`}
-                          onClick={() => { setTiendaOpen(false); setActiveCategory(null) }}
-                          className="flex items-center justify-between px-5 py-2 text-xs tracking-[0.12em] uppercase text-[var(--color-charcoal)] hover:bg-[var(--color-bg)] transition-colors"
-                        >
-                          {cat.name}
-                          {cat.subcategories.length > 0 && <ChevronRight size={11} className="text-[var(--color-stone)] ml-2 flex-shrink-0" />}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Columna subcategorías */}
-                  {activeCategory && (
-                    <ul className="py-3 min-w-[190px] border-l border-[var(--color-border)]">
-                      {activeCategory.subcategories.map(sub => (
-                        <li key={sub.id}>
-                          <Link
-                            href={`/tienda?cat=${sub.slug}`}
-                            onClick={() => { setTiendaOpen(false); setActiveCategory(null) }}
-                            className="flex items-center justify-between px-5 py-2 text-xs tracking-[0.12em] uppercase text-[var(--color-charcoal)] hover:bg-[var(--color-bg)] transition-colors"
-                          >
-                            {sub.name}
-                            {sub.subcategories.length > 0 && <ChevronRight size={11} className="text-[var(--color-stone)] ml-2 flex-shrink-0" />}
-                          </Link>
-                          {sub.subcategories.length > 0 && (
-                            <ul className="pl-4 pb-1">
-                              {sub.subcategories.map(leaf => (
-                                <li key={leaf.id}>
-                                  <Link
-                                    href={`/tienda?cat=${leaf.slug}`}
-                                    onClick={() => { setTiendaOpen(false); setActiveCategory(null) }}
-                                    className="block px-3 py-1 text-[11px] tracking-[0.1em] uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] transition-colors"
-                                  >
-                                    {leaf.name}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
             </div>
 
             <Link href="/contacto" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
@@ -189,6 +120,78 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
           </div>
         </div>
       </header>
+
+      {/* ── MEGA MENU ── full width panel */}
+      {categories.length > 0 && (
+        <div
+          className={`fixed left-0 right-0 z-40 hidden md:block transition-all duration-300 ease-in-out ${headerHeight} ${
+            megaOpen
+              ? 'opacity-100 translate-y-0 pointer-events-auto'
+              : 'opacity-0 -translate-y-2 pointer-events-none'
+          }`}
+          style={{ backgroundColor: '#e5e7eb' }}
+          onMouseEnter={cancelClose}
+          onMouseLeave={close}
+        >
+          <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="flex gap-12">
+              {/* "Ver todo" como primer columna */}
+              <div className="flex flex-col gap-2 min-w-[120px]">
+                <Link
+                  href="/tienda"
+                  onClick={() => setMegaOpen(false)}
+                  className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--color-charcoal)] mb-3 hover:text-[var(--color-stone)] transition-colors"
+                >
+                  Ver todo
+                </Link>
+              </div>
+
+              {/* Una columna por categoría madre */}
+              {categories.map(cat => (
+                <div key={cat.id} className="flex flex-col min-w-[140px]">
+                  <Link
+                    href={`/tienda?cat=${cat.slug}`}
+                    onClick={() => setMegaOpen(false)}
+                    className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--color-charcoal)] mb-3 hover:text-[var(--color-stone)] transition-colors"
+                  >
+                    {cat.name}
+                  </Link>
+                  {cat.subcategories.length > 0 && (
+                    <ul className="flex flex-col gap-2">
+                      {cat.subcategories.map(sub => (
+                        <li key={sub.id}>
+                          <Link
+                            href={`/tienda?cat=${sub.slug}`}
+                            onClick={() => setMegaOpen(false)}
+                            className="text-xs tracking-[0.08em] text-zinc-600 hover:text-[var(--color-charcoal)] transition-colors"
+                          >
+                            {sub.name}
+                          </Link>
+                          {sub.subcategories.length > 0 && (
+                            <ul className="mt-1 ml-2 flex flex-col gap-1">
+                              {sub.subcategories.map(leaf => (
+                                <li key={leaf.id}>
+                                  <Link
+                                    href={`/tienda?cat=${leaf.slug}`}
+                                    onClick={() => setMegaOpen(false)}
+                                    className="text-[11px] tracking-[0.06em] text-zinc-400 hover:text-zinc-700 transition-colors"
+                                  >
+                                    {leaf.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile fullscreen menu */}
       {menuOpen && (
