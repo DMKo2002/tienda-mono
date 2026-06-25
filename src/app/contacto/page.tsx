@@ -213,6 +213,7 @@ export default async function ContactPage() {
 
       <Footer
         storeName={storeName}
+        logoUrl={config?.logo_url ?? undefined}
         whatsapp={whatsapp}
         email={email}
         instagramUrl={instagram || undefined}
