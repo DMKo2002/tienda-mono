@@ -8,6 +8,7 @@ interface Branch {
 
 interface FooterProps {
   storeName?: string
+  logoUrl?: string
   whatsapp?: string
   email?: string
   instagramUrl?: string
@@ -51,6 +52,7 @@ function IconWhatsApp() {
 
 export default function Footer({
   storeName = 'TIENDA',
+  logoUrl,
   whatsapp = '',
   email = '',
   instagramUrl,
@@ -68,9 +70,17 @@ export default function Footer({
 
           {/* Marca + social */}
           <div className="md:col-span-1">
-            <p className="font-display text-2xl font-light tracking-[0.2em] uppercase text-white mb-4">
-              {storeName}
-            </p>
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt={storeName}
+                className="max-h-10 w-auto object-contain mb-4 brightness-0 invert"
+              />
+            ) : (
+              <p className="font-display text-2xl font-light tracking-[0.2em] uppercase text-white mb-4">
+                {storeName}
+              </p>
+            )}
             <p className="text-xs leading-relaxed text-white/50 mb-5">Estilo que trasciende tendencia.</p>
             {hasSocial && (
               <div className="flex items-center gap-3">

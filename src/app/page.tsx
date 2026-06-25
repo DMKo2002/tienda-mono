@@ -242,6 +242,7 @@ export default async function HomePage() {
 
       <Footer
         storeName={storeName}
+        logoUrl={asset('logo') ?? config?.logo_url ?? undefined}
         whatsapp={config?.whatsapp_number ?? ''}
         email={config?.notification_email ?? ''}
         instagramUrl={(config as any)?.instagram_url ?? undefined}

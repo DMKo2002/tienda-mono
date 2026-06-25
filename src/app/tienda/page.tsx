@@ -289,6 +289,7 @@ export default async function TiendaPage({ searchParams }: Props) {
 
       <Footer
         storeName={storeName}
+        logoUrl={config?.logo_url ?? undefined}
         whatsapp={config?.whatsapp_number ?? ''}
         email={config?.notification_email ?? ''}
         instagramUrl={config?.instagram_url ?? undefined}
