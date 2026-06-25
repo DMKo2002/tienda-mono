@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ImageOff } from 'lucide-react'
 
 interface ProductCardProps {
@@ -64,7 +65,13 @@ export default function ProductCard({
       {/* Imagen */}
       <div className="product-img-wrap bg-[#F2EEE9] aspect-[3/4] w-full mb-3 relative overflow-hidden">
         {coverUrl ? (
-          <img src={coverUrl} alt={name} className="w-full h-full object-cover" loading="lazy" />
+          <Image
+            src={coverUrl.split('?')[0]}
+            alt={name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <ImageOff size={32} className="text-[var(--color-border)]" />
