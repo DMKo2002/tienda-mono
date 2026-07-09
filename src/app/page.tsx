@@ -67,11 +67,10 @@ export default async function HomePage() {
 
         {/* ── HERO ─────────────────────────────────────────────── */}
         {/* Proporciones del diseño: lienzo 1728×1117, columna izquierda 428px (24.77%), imagen 1300×975 (75.23% × 87.3%) */}
-        <section className="relative bg-[var(--color-cream)] lg:aspect-[1728/1117]">
-          <div className="flex flex-col lg:flex-row lg:h-full">
+        <section className="relative bg-[var(--color-cream)] flex flex-col lg:grid lg:grid-cols-[24.77%_75.23%] lg:grid-rows-1 lg:aspect-[1728/1117]">
 
-            {/* Columna izquierda — logo del tenant, tagline y CTA */}
-            <div className="order-2 lg:order-1 w-full lg:w-[24.77%] lg:h-full flex flex-col justify-between gap-10 px-8 py-12 lg:px-10 lg:py-16">
+            {/* Columna izquierda — logo del tenant, tagline y CTA (el grid la estira al 100% de la fila) */}
+            <div className="order-2 lg:order-1 w-full flex flex-col justify-between gap-10 px-8 py-12 lg:px-10 lg:py-16">
 
               <div className="flex justify-center opacity-0 animate-fade-in delay-100">
                 {config?.logo_url ? (
@@ -111,10 +110,10 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Columna derecha — imagen de temporada (975/1117 = 87.3% de alto, alineada arriba) */}
-            <div className="order-1 lg:order-2 w-full lg:w-[75.23%] lg:h-full flex lg:items-start">
+            {/* Columna derecha — celda del grid al 100% de la fila; la imagen ocupa 87.3% de esa altura, alineada arriba */}
+            <div className="order-1 lg:order-2 w-full">
               <div
-                className="relative w-full aspect-[4/5] lg:aspect-[1300/975] lg:h-[87.3%] flex items-end overflow-hidden bg-[#EDE8E1]"
+                className="relative w-full aspect-[4/5] lg:aspect-auto lg:h-[87.3%] flex items-end overflow-hidden bg-[#EDE8E1]"
                 style={config?.hero_image_url ? {
                   backgroundImage: `url(${config.hero_image_url})`,
                   backgroundSize: 'cover',
