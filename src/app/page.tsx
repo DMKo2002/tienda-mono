@@ -8,7 +8,8 @@ import Footer from '@/components/layout/Footer'
 import ProductCard from '@/components/shop/ProductCard'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Truck, RotateCcw, Headset } from 'lucide-react'
+import { IconArrowMono } from '@/components/icons/SocialIcons'
 
 export default async function HomePage() {
   // cookies() debe llamarse ANTES de cualquier await
@@ -26,7 +27,7 @@ export default async function HomePage() {
 
   const { data: config } = await supabase
     .from('store_config')
-    .select('logo_url, hero_image_url, hero_eyebrow, hero_title_line1, hero_title_italic, hero_title_line3, hero_season, hero_text_color, whatsapp_number, notification_email, instagram_url, facebook_url, tiktok_url, pickup_address, pickup_enabled, branches, price_visibility')
+    .select('logo_url, hero_image_url, hero_eyebrow, hero_title_line1, hero_title_italic, hero_title_line3, hero_subtitle, hero_season, hero_text_color, whatsapp_number, notification_email, instagram_url, facebook_url, tiktok_url, pickup_address, pickup_enabled, branches, price_visibility')
     .eq('tenant_id', TENANT_ID())
     .single()
 
@@ -54,73 +55,151 @@ export default async function HomePage() {
 
   return (
     <>
-      <Navbar storeName={storeName} logoUrl={config?.logo_url} />
+      <Navbar
+        storeName={storeName}
+        logoUrl={config?.logo_url}
+        instagramUrl={(config as any)?.instagram_url ?? undefined}
+        facebookUrl={(config as any)?.facebook_url ?? undefined}
+        tiktokUrl={(config as any)?.tiktok_url ?? undefined}
+      />
 
       <main>
 
         {/* ── HERO ─────────────────────────────────────────────── */}
-        <section
-          className="relative min-h-screen flex items-end pb-20 overflow-hidden bg-[#EDE8E1]"
-          style={config?.hero_image_url ? {
-            backgroundImage: `url(${config.hero_image_url})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          } : undefined}
-        >
-          {/* Overlay oscuro cuando hay imagen */}
-          {config?.hero_image_url && (
-            <div className="absolute inset-0 bg-black/40" />
-          )}
+        <section className="relative flex flex-col lg:flex-row lg:min-h-screen">
 
-          {/* Texto hero */}
-          {(() => {
-            const customColor = (config as any)?.hero_text_color
-            const textStyle = customColor ? { color: customColor } : undefined
-            const defaultEyebrowClass = config?.hero_image_url ? 'text-white/70' : 'text-[var(--color-stone)]'
-            const defaultTitleClass   = config?.hero_image_url ? 'text-white'    : 'text-[var(--color-charcoal)]'
-            const defaultLinkClass    = config?.hero_image_url
-              ? 'border-white/70 text-white hover:border-white hover:text-white/80'
-              : 'border-[var(--color-charcoal)] text-[var(--color-charcoal)] hover:text-[var(--color-stone)] hover:border-[var(--color-stone)]'
-            return (
-              <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-                <div className="max-w-xl opacity-0 animate-fade-up delay-100">
+          {/* Columna izquierda — logo del tenant, tagline y CTA */}
+          <div className="order-2 lg:order-1 w-full lg:w-[28%] bg-[var(--color-cream)] flex flex-col justify-between gap-10 px-8 py-12 lg:px-10 lg:py-16">
+
+            <div className="opacity-0 animate-fade-in delay-100">
+              {config?.logo_url ? (
+                <img
+                  src={config.logo_url}
+                  alt={storeName}
+                  className="max-h-[180px] max-w-[200px] object-contain"
+                />
+              ) : (
+                <div className="w-[200px] max-w-full h-[180px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
+                  <span className="text-[10px] tracking-[0.15em] uppercase text-[var(--color-stone)] text-center px-4">
+                    Logo de la tienda
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="opacity-0 animate-fade-up delay-200">
+              <p className="font-display text-lg leading-snug text-[var(--color-charcoal)] mb-8 whitespace-pre-line">
+                {(config as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
+              </p>
+
+              <div className="flex items-center gap-5 flex-wrap">
+                <Link
+                  href="/tienda"
+                  className="inline-flex items-center justify-center bg-[var(--color-charcoal)] text-white text-xs tracking-[0.15em] uppercase px-7 py-3 hover:opacity-90 transition-opacity"
+                >
+                  Ver colección
+                </Link>
+                <Link
+                  href="/tienda"
+                  className="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] border-b border-[var(--color-charcoal)] pb-1 hover:text-[var(--color-stone)] hover:border-[var(--color-stone)] transition-colors"
+                >
+                  Tienda <IconArrowMono className="-rotate-90" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Columna derecha — imagen de temporada + título */}
+          <div
+            className="order-1 lg:order-2 relative w-full lg:w-[72%] aspect-[4/5] lg:aspect-auto min-h-[70vh] lg:min-h-screen flex items-end overflow-hidden bg-[#EDE8E1]"
+            style={config?.hero_image_url ? {
+              backgroundImage: `url(${config.hero_image_url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : undefined}
+          >
+            {config?.hero_image_url && (
+              <div className="absolute inset-0 bg-black/20" />
+            )}
+
+            {(() => {
+              const customColor = (config as any)?.hero_text_color
+              const textStyle = customColor ? { color: customColor } : undefined
+              const defaultEyebrowClass = config?.hero_image_url ? 'text-white/80' : 'text-[var(--color-stone)]'
+              const defaultTitleClass   = config?.hero_image_url ? 'text-white'    : 'text-[var(--color-charcoal)]'
+              return (
+                <div className="relative z-10 px-8 pb-14 lg:px-16 lg:pb-20 opacity-0 animate-fade-up delay-100">
                   <p
                     className={`text-xs tracking-[0.25em] uppercase mb-4 ${!customColor ? defaultEyebrowClass : ''}`}
                     style={textStyle ? { color: customColor + 'B3' } : undefined}
                   >
-                    {(config as any)?.hero_eyebrow ?? 'Nueva temporada'}
+                    {(config as any)?.hero_eyebrow ?? 'Opening New Season Summer 2026'}
                   </p>
                   <h1
-                    className={`font-display text-6xl md:text-8xl font-light leading-none mb-8 ${!customColor ? defaultTitleClass : ''}`}
+                    className={`font-display text-5xl md:text-7xl font-semibold leading-[1.05] ${!customColor ? defaultTitleClass : ''}`}
                     style={textStyle}
                   >
-                    {(config as any)?.hero_title_line1 ?? 'Estilo que'}<br />
-                    <em className="italic">{(config as any)?.hero_title_italic ?? 'trasciende'}</em><br />
-                    {(config as any)?.hero_title_line3 ?? 'tendencia'}
+                    {(config as any)?.hero_title_line1 ?? 'Timeless Design'}<br />
+                    <em className="italic font-normal">{(config as any)?.hero_title_italic ?? 'Beyond Trends'}</em>
+                    {(config as any)?.hero_title_line3 && <><br />{(config as any).hero_title_line3}</>}
                   </h1>
-                  <Link
-                    href="/tienda"
-                    className={`inline-flex items-center gap-3 text-xs tracking-[0.2em] uppercase border-b pb-1 transition-colors ${!customColor ? defaultLinkClass : ''}`}
-                    style={textStyle}
-                  >
-                    Ver colección <ArrowRight size={14} />
-                  </Link>
                 </div>
-              </div>
-            )
-          })()}
-
-          {/* Número decorativo */}
-          <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-0 animate-fade-in delay-400 hidden lg:block">
-            <p className="font-display text-[200px] font-light text-[var(--color-charcoal)]/5 leading-none select-none">
-              {(config as any)?.hero_season ?? 'AW'}
-            </p>
+              )
+            })()}
           </div>
 
-          {/* Línea vertical decorativa */}
-          <div className="absolute left-6 top-32 bottom-20 w-px bg-[var(--color-charcoal)]/10 hidden lg:block" />
-
         </section>
+
+        {/* ── TRUST BADGES ─────────────────────────────────────── */}
+        <section className="w-full px-6 py-14 border-b border-[var(--color-border)]">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              { icon: Truck, title: 'Envío gratis', text: 'En compras que superen el monto mínimo. Entrega rápida y segura a todo el país.' },
+              { icon: RotateCcw, title: 'Devoluciones', text: 'Tenés 14 días para devolver o cambiar tu pedido si no quedás satisfecho.' },
+              { icon: Headset, title: 'Atención al cliente', text: 'Estamos disponibles para ayudarte en todo momento por WhatsApp y email.' },
+            ].map(({ icon: Icon, title, text }) => (
+              <div key={title} className="flex items-start gap-4">
+                <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[var(--color-cream)] text-[var(--color-charcoal)]">
+                  <Icon size={18} strokeWidth={1.25} />
+                </div>
+                <div>
+                  <p className="text-xs font-medium tracking-[0.1em] uppercase text-[var(--color-charcoal)] mb-1">{title}</p>
+                  <p className="text-xs text-[var(--color-stone)] leading-relaxed">{text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── NEW ARRIVALS ──────────────────────────────────────── */}
+        {products && products.length > 0 && (
+          <section className="w-full px-6 py-24 text-center">
+            <h2 className="font-display text-4xl font-semibold text-[var(--color-charcoal)] mb-2">
+              New Arrivals
+            </h2>
+            <p className="text-sm text-[var(--color-stone)] mb-10">
+              {(config as any)?.hero_eyebrow ?? 'Opening New Season - Summer 2026'}
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
+              {products.slice(0, 4).map((product: any) => {
+                const cover = product.product_images?.find((img: any) => img.is_cover) ?? product.product_images?.[0]
+                return (
+                  <Link key={product.id} href={`/tienda/${product.slug}`} className="product-img-wrap block aspect-[2/3] relative bg-[#F2EEE9] overflow-hidden">
+                    {cover?.url && (
+                      <Image
+                        src={cover.url.split('?')[0]}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
+        )}
 
         {/* ── FEATURED COLLECTION ──────────────────────────────── */}
         <section className="w-full px-6 py-24">

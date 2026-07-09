@@ -2,19 +2,23 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { ShoppingBag, Menu, X, Search, User } from 'lucide-react'
+import { Menu, X, Search } from 'lucide-react'
 import { useCart } from '@/components/shop/CartContext'
+import { IconInstagram, IconFacebook, IconTikTok, IconCartMono, IconUserMono } from '@/components/icons/SocialIcons'
 
 interface NavbarProps {
   storeName?: string
   logoUrl?: string | null
+  instagramUrl?: string
+  facebookUrl?: string
+  tiktokUrl?: string
 }
 
 interface Leaf { id: string; name: string; slug: string }
 interface Sub extends Leaf { subcategories: Leaf[] }
 interface Category extends Leaf { subcategories: Sub[] }
 
-export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
+export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, facebookUrl, tiktokUrl }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
@@ -87,15 +91,39 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
           </Link>
 
           {/* Iconos derecha */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-5">
             <button className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-              <Search size={18} strokeWidth={1.5} />
+              <Search size={16} strokeWidth={1.2} />
             </button>
+
+            {(instagramUrl || facebookUrl || tiktokUrl) && (
+              <>
+                <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
+                  {instagramUrl && (
+                    <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[var(--color-stone)] transition-colors">
+                      <IconInstagram />
+                    </a>
+                  )}
+                  {facebookUrl && (
+                    <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[var(--color-stone)] transition-colors">
+                      <IconFacebook />
+                    </a>
+                  )}
+                  {tiktokUrl && (
+                    <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[var(--color-stone)] transition-colors">
+                      <IconTikTok />
+                    </a>
+                  )}
+                </div>
+                <span className="w-px h-4 bg-[var(--color-charcoal)]/25" aria-hidden />
+              </>
+            )}
+
             <Link href="/cuenta" className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors" title="Mi cuenta">
-              <User size={18} strokeWidth={1.5} />
+              <IconUserMono />
             </Link>
             <Link href="/carrito" className="relative text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-              <ShoppingBag size={20} strokeWidth={1.5} />
+              <IconCartMono />
               {count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
                   {count}
@@ -107,7 +135,7 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl }: NavbarProps) {
           {/* Mobile hamburger */}
           <div className="md:hidden flex items-center gap-4 ml-auto">
             <Link href="/carrito" className="relative">
-              <ShoppingBag size={20} strokeWidth={1.5} />
+              <IconCartMono />
               {count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
                   {count}
