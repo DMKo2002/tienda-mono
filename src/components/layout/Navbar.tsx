@@ -58,16 +58,13 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
       }`}>
         <div className="max-w-7xl mx-auto px-6 lg:max-w-none lg:mx-0 lg:px-0 flex items-center lg:grid lg:grid-cols-[24.77%_75.23%]">
 
-          {/* Izquierda — marca (mismo ancho y padding que la columna del LOGO en el hero, para centrar sobre el mismo eje) */}
+          {/* Izquierda — marca. En este diseño el nombre de texto (header) y el isotipo (LOGO del hero) */}
+          {/* son dos elementos independientes — el header siempre muestra el nombre, no lo reemplaza el logo */}
           <div className="flex-1 lg:flex-none flex justify-start lg:justify-center lg:px-10">
             <Link href="/">
-              {logoUrl ? (
-                <img src={logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
-              ) : (
-                <span className="font-display text-xl font-semibold text-[var(--color-charcoal)]">
-                  {storeName}
-                </span>
-              )}
+              <span className="font-display text-xl font-semibold text-[var(--color-charcoal)]">
+                {storeName}
+              </span>
             </Link>
           </div>
 

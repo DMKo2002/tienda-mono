@@ -72,9 +72,10 @@ export default async function HomePage() {
             {/* Columna izquierda — el grid la estira al 100% de la fila; el contenido vive en un wrapper */}
             {/* del 87.3% (975/1117) para que el botón quede a la misma altura que el borde inferior de la imagen */}
             <div className="order-2 lg:order-1 w-full px-8 py-12 lg:px-10 lg:py-16 lg:h-full">
-              <div className="h-full lg:h-[87.3%] flex flex-col justify-between gap-10">
+              <div className="h-full lg:h-[87.3%] flex flex-col gap-10">
 
-                <div className="flex justify-center opacity-0 animate-fade-in delay-100">
+                {/* flex-1 + items-center centra el logo verticalmente respecto a la altura de la imagen del hero */}
+                <div className="flex-1 flex items-center justify-center opacity-0 animate-fade-in delay-100">
                   {config?.logo_url ? (
                     <img
                       src={config.logo_url}
