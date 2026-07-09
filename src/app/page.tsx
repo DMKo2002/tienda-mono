@@ -66,88 +66,93 @@ export default async function HomePage() {
       <main>
 
         {/* ── HERO ─────────────────────────────────────────────── */}
-        <section className="relative flex flex-col lg:flex-row lg:min-h-screen">
+        {/* Proporciones del diseño: lienzo 1728×1117, columna izquierda 428px (24.77%), imagen 1300×975 (75.23% × 87.3%) */}
+        <section className="relative bg-[var(--color-cream)] lg:aspect-[1728/1117]">
+          <div className="flex flex-col lg:flex-row lg:h-full">
 
-          {/* Columna izquierda — logo del tenant, tagline y CTA */}
-          <div className="order-2 lg:order-1 w-full lg:w-[28%] bg-[var(--color-cream)] flex flex-col justify-between gap-10 px-8 py-12 lg:px-10 lg:py-16">
+            {/* Columna izquierda — logo del tenant, tagline y CTA */}
+            <div className="order-2 lg:order-1 w-full lg:w-[24.77%] lg:h-full flex flex-col justify-between gap-10 px-8 py-12 lg:px-10 lg:py-16">
 
-            <div className="opacity-0 animate-fade-in delay-100">
-              {config?.logo_url ? (
-                <img
-                  src={config.logo_url}
-                  alt={storeName}
-                  className="max-h-[180px] max-w-[200px] object-contain"
-                />
-              ) : (
-                <div className="w-[200px] max-w-full h-[180px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
-                  <span className="text-[10px] tracking-[0.15em] uppercase text-[var(--color-stone)] text-center px-4">
-                    Logo de la tienda
-                  </span>
+              <div className="flex justify-center opacity-0 animate-fade-in delay-100">
+                {config?.logo_url ? (
+                  <img
+                    src={config.logo_url}
+                    alt={storeName}
+                    className="max-h-[180px] max-w-[200px] object-contain"
+                  />
+                ) : (
+                  <div className="w-[200px] max-w-full h-[180px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-[var(--color-stone)] text-center px-4">
+                      Logo de la tienda
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="opacity-0 animate-fade-up delay-200">
+                <p className="font-display text-lg leading-snug text-[var(--color-charcoal)] mb-8 whitespace-pre-line">
+                  {(config as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
+                </p>
+
+                <div className="flex items-center gap-5 flex-wrap">
+                  <Link
+                    href="/tienda"
+                    className="inline-flex items-center justify-center bg-[var(--color-charcoal)] text-white text-xs tracking-[0.15em] uppercase px-7 py-3 hover:opacity-90 transition-opacity"
+                  >
+                    Ver colección
+                  </Link>
+                  <Link
+                    href="/tienda"
+                    className="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] border-b border-[var(--color-charcoal)] pb-1 hover:text-[var(--color-stone)] hover:border-[var(--color-stone)] transition-colors"
+                  >
+                    Tienda <IconArrowMono />
+                  </Link>
                 </div>
-              )}
-            </div>
-
-            <div className="opacity-0 animate-fade-up delay-200">
-              <p className="font-display text-lg leading-snug text-[var(--color-charcoal)] mb-8 whitespace-pre-line">
-                {(config as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
-              </p>
-
-              <div className="flex items-center gap-5 flex-wrap">
-                <Link
-                  href="/tienda"
-                  className="inline-flex items-center justify-center bg-[var(--color-charcoal)] text-white text-xs tracking-[0.15em] uppercase px-7 py-3 hover:opacity-90 transition-opacity"
-                >
-                  Ver colección
-                </Link>
-                <Link
-                  href="/tienda"
-                  className="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] border-b border-[var(--color-charcoal)] pb-1 hover:text-[var(--color-stone)] hover:border-[var(--color-stone)] transition-colors"
-                >
-                  Tienda <IconArrowMono className="-rotate-90" />
-                </Link>
               </div>
             </div>
+
+            {/* Columna derecha — imagen de temporada (975/1117 = 87.3% de alto, alineada arriba) */}
+            <div className="order-1 lg:order-2 w-full lg:w-[75.23%] lg:h-full flex lg:items-start">
+              <div
+                className="relative w-full aspect-[4/5] lg:aspect-[1300/975] lg:h-[87.3%] flex items-end overflow-hidden bg-[#EDE8E1]"
+                style={config?.hero_image_url ? {
+                  backgroundImage: `url(${config.hero_image_url})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                } : undefined}
+              >
+                {config?.hero_image_url && (
+                  <div className="absolute inset-0 bg-black/20" />
+                )}
+
+                {(() => {
+                  const customColor = (config as any)?.hero_text_color
+                  const textStyle = customColor ? { color: customColor } : undefined
+                  const defaultEyebrowClass = config?.hero_image_url ? 'text-white/80' : 'text-[var(--color-stone)]'
+                  const defaultTitleClass   = config?.hero_image_url ? 'text-white'    : 'text-[var(--color-charcoal)]'
+                  return (
+                    <div className="relative z-10 px-8 pb-14 lg:px-16 lg:pb-20 opacity-0 animate-fade-up delay-100">
+                      <p
+                        className={`text-xs tracking-[0.25em] uppercase mb-4 ${!customColor ? defaultEyebrowClass : ''}`}
+                        style={textStyle ? { color: customColor + 'B3' } : undefined}
+                      >
+                        {(config as any)?.hero_eyebrow ?? 'Opening New Season Summer 2026'}
+                      </p>
+                      <h1
+                        className={`font-display text-5xl md:text-7xl font-semibold leading-[1.05] ${!customColor ? defaultTitleClass : ''}`}
+                        style={textStyle}
+                      >
+                        {(config as any)?.hero_title_line1 ?? 'Timeless Design'}<br />
+                        <em className="italic font-normal">{(config as any)?.hero_title_italic ?? 'Beyond Trends'}</em>
+                        {(config as any)?.hero_title_line3 && <><br />{(config as any).hero_title_line3}</>}
+                      </h1>
+                    </div>
+                  )
+                })()}
+              </div>
+            </div>
+
           </div>
-
-          {/* Columna derecha — imagen de temporada + título */}
-          <div
-            className="order-1 lg:order-2 relative w-full lg:w-[72%] aspect-[4/5] lg:aspect-auto min-h-[70vh] lg:min-h-screen flex items-end overflow-hidden bg-[#EDE8E1]"
-            style={config?.hero_image_url ? {
-              backgroundImage: `url(${config.hero_image_url})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            } : undefined}
-          >
-            {config?.hero_image_url && (
-              <div className="absolute inset-0 bg-black/20" />
-            )}
-
-            {(() => {
-              const customColor = (config as any)?.hero_text_color
-              const textStyle = customColor ? { color: customColor } : undefined
-              const defaultEyebrowClass = config?.hero_image_url ? 'text-white/80' : 'text-[var(--color-stone)]'
-              const defaultTitleClass   = config?.hero_image_url ? 'text-white'    : 'text-[var(--color-charcoal)]'
-              return (
-                <div className="relative z-10 px-8 pb-14 lg:px-16 lg:pb-20 opacity-0 animate-fade-up delay-100">
-                  <p
-                    className={`text-xs tracking-[0.25em] uppercase mb-4 ${!customColor ? defaultEyebrowClass : ''}`}
-                    style={textStyle ? { color: customColor + 'B3' } : undefined}
-                  >
-                    {(config as any)?.hero_eyebrow ?? 'Opening New Season Summer 2026'}
-                  </p>
-                  <h1
-                    className={`font-display text-5xl md:text-7xl font-semibold leading-[1.05] ${!customColor ? defaultTitleClass : ''}`}
-                    style={textStyle}
-                  >
-                    {(config as any)?.hero_title_line1 ?? 'Timeless Design'}<br />
-                    <em className="italic font-normal">{(config as any)?.hero_title_italic ?? 'Beyond Trends'}</em>
-                    {(config as any)?.hero_title_line3 && <><br />{(config as any).hero_title_line3}</>}
-                  </h1>
-                </div>
-              )
-            })()}
-          </div>
-
         </section>
 
         {/* ── TRUST BADGES ─────────────────────────────────────── */}

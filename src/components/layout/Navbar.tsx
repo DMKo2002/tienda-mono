@@ -56,10 +56,23 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'bg-[var(--color-warm-white)] border-b border-[var(--color-border)] py-3' : 'bg-transparent py-6'
       }`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 flex items-center">
 
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Izquierda — marca */}
+          <div className="flex-1 flex justify-start">
+            <Link href="/">
+              {logoUrl ? (
+                <img src={logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
+              ) : (
+                <span className="font-display text-xl font-semibold text-[var(--color-charcoal)]">
+                  {storeName}
+                </span>
+              )}
+            </Link>
+          </div>
+
+          {/* Centro — nav links */}
+          <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
             <Link href="/" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
               Home
             </Link>
@@ -79,72 +92,64 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
             </Link>
           </nav>
 
-          {/* Logo centrado */}
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            {logoUrl ? (
-              <img src={logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
-            ) : (
-              <span className="font-display text-xl font-light tracking-[0.2em] uppercase text-[var(--color-charcoal)]">
-                {storeName}
-              </span>
-            )}
-          </Link>
+          {/* Derecha — iconos */}
+          <div className="flex-1 flex justify-end items-center">
 
-          {/* Iconos derecha */}
-          <div className="hidden md:flex items-center gap-5">
-            <button className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-              <Search size={16} strokeWidth={1.2} />
-            </button>
+            <div className="hidden md:flex items-center gap-5">
+              <button className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+                <Search size={16} strokeWidth={1.2} />
+              </button>
 
-            {(instagramUrl || facebookUrl || tiktokUrl) && (
-              <>
-                <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
-                  {instagramUrl && (
-                    <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[var(--color-stone)] transition-colors">
-                      <IconInstagram />
-                    </a>
-                  )}
-                  {facebookUrl && (
-                    <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[var(--color-stone)] transition-colors">
-                      <IconFacebook />
-                    </a>
-                  )}
-                  {tiktokUrl && (
-                    <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[var(--color-stone)] transition-colors">
-                      <IconTikTok />
-                    </a>
-                  )}
-                </div>
-                <span className="w-px h-4 bg-[var(--color-charcoal)]/25" aria-hidden />
-              </>
-            )}
-
-            <Link href="/cuenta" className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors" title="Mi cuenta">
-              <IconUserMono />
-            </Link>
-            <Link href="/carrito" className="relative text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-              <IconCartMono />
-              {count > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
-                  {count}
-                </span>
+              {(instagramUrl || facebookUrl || tiktokUrl) && (
+                <>
+                  <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
+                    {instagramUrl && (
+                      <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[var(--color-stone)] transition-colors">
+                        <IconInstagram />
+                      </a>
+                    )}
+                    {facebookUrl && (
+                      <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[var(--color-stone)] transition-colors">
+                        <IconFacebook />
+                      </a>
+                    )}
+                    {tiktokUrl && (
+                      <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[var(--color-stone)] transition-colors">
+                        <IconTikTok />
+                      </a>
+                    )}
+                  </div>
+                  <span className="w-px h-4 bg-[var(--color-charcoal)]/25" aria-hidden />
+                </>
               )}
-            </Link>
-          </div>
 
-          {/* Mobile hamburger */}
-          <div className="md:hidden flex items-center gap-4 ml-auto">
-            <Link href="/carrito" className="relative">
-              <IconCartMono />
-              {count > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
-                  {count}
-                </span>
-              )}
-            </Link>
-            <button onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
-            </button>
+              <Link href="/cuenta" className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors" title="Mi cuenta">
+                <IconUserMono />
+              </Link>
+              <Link href="/carrito" className="relative text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+                <IconCartMono />
+                {count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
+                    {count}
+                  </span>
+                )}
+              </Link>
+            </div>
+
+            {/* Mobile hamburger */}
+            <div className="md:hidden flex items-center gap-4">
+              <Link href="/carrito" className="relative">
+                <IconCartMono />
+                {count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
+                    {count}
+                  </span>
+                )}
+              </Link>
+              <button onClick={() => setMenuOpen(!menuOpen)}>
+                {menuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
+              </button>
+            </div>
           </div>
         </div>
       </header>
