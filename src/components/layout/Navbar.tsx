@@ -56,10 +56,10 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'bg-[var(--color-warm-white)] border-b border-[var(--color-border)] py-3' : 'bg-transparent py-6'
       }`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center lg:grid lg:grid-cols-[24.77%_75.23%]">
+        <div className="max-w-7xl mx-auto px-6 lg:max-w-none lg:mx-0 lg:px-0 flex items-center lg:grid lg:grid-cols-[24.77%_75.23%]">
 
-          {/* Izquierda — marca (mismo ancho y centrado que la columna del LOGO en el hero) */}
-          <div className="flex-1 lg:flex-none flex justify-start lg:justify-center">
+          {/* Izquierda — marca (mismo ancho y padding que la columna del LOGO en el hero, para centrar sobre el mismo eje) */}
+          <div className="flex-1 lg:flex-none flex justify-start lg:justify-center lg:px-10">
             <Link href="/">
               {logoUrl ? (
                 <img src={logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
@@ -72,7 +72,7 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
           </div>
 
           {/* Derecha — nav centrado + íconos (ocupa la columna del ancho de la imagen del hero) */}
-          <div className="hidden lg:flex items-center">
+          <div className="hidden lg:flex items-center lg:pl-10 lg:pr-12">
             <nav className="flex-1 flex items-center justify-center gap-8 font-ui">
               <Link href="/" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
                 Home
