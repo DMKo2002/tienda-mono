@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { Menu, X, Search } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useCart } from '@/components/shop/CartContext'
 import { IconInstagram, IconFacebook, IconTikTok, IconCartMono, IconUserMono } from '@/components/icons/SocialIcons'
 
@@ -56,10 +56,10 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'bg-[var(--color-warm-white)] border-b border-[var(--color-border)] py-3' : 'bg-transparent py-6'
       }`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center">
+        <div className="max-w-7xl mx-auto px-6 flex items-center lg:grid lg:grid-cols-[24.77%_75.23%]">
 
-          {/* Izquierda — marca */}
-          <div className="flex-1 flex justify-start">
+          {/* Izquierda — marca (mismo ancho y centrado que la columna del LOGO en el hero) */}
+          <div className="flex-1 lg:flex-none flex justify-start lg:justify-center">
             <Link href="/">
               {logoUrl ? (
                 <img src={logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
@@ -71,35 +71,26 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
             </Link>
           </div>
 
-          {/* Centro — nav links */}
-          <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
-            <Link href="/" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-              Home
-            </Link>
-
-            {/* Tienda trigger */}
-            <div onMouseEnter={open} onMouseLeave={close}>
+          {/* Derecha — nav centrado + íconos (ocupa la columna del ancho de la imagen del hero) */}
+          <div className="hidden lg:flex items-center">
+            <nav className="flex-1 flex items-center justify-center gap-8 font-ui">
+              <Link href="/" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+                Home
+              </Link>
               <Link
                 href="/tienda"
+                onMouseEnter={open}
+                onMouseLeave={close}
                 className={`text-xs tracking-[0.15em] uppercase transition-colors ${megaOpen ? 'text-[var(--color-stone)]' : 'text-[var(--color-charcoal)] hover:text-[var(--color-stone)]'}`}
               >
                 Tienda
               </Link>
-            </div>
+              <Link href="/contacto" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+                Contacto
+              </Link>
+            </nav>
 
-            <Link href="/contacto" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-              Contacto
-            </Link>
-          </nav>
-
-          {/* Derecha — iconos */}
-          <div className="flex-1 flex justify-end items-center">
-
-            <div className="hidden md:flex items-center gap-5">
-              <button className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-                <Search size={16} strokeWidth={1.2} />
-              </button>
-
+            <div className="flex items-center gap-5">
               {(instagramUrl || facebookUrl || tiktokUrl) && (
                 <>
                   <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
@@ -135,21 +126,21 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
                 )}
               </Link>
             </div>
+          </div>
 
-            {/* Mobile hamburger */}
-            <div className="md:hidden flex items-center gap-4">
-              <Link href="/carrito" className="relative">
-                <IconCartMono />
-                {count > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
-                    {count}
-                  </span>
-                )}
-              </Link>
-              <button onClick={() => setMenuOpen(!menuOpen)}>
-                {menuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
-              </button>
-            </div>
+          {/* Mobile hamburger */}
+          <div className="flex lg:hidden items-center gap-4 ml-auto">
+            <Link href="/carrito" className="relative">
+              <IconCartMono />
+              {count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
+                  {count}
+                </span>
+              )}
+            </Link>
+            <button onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
+            </button>
           </div>
         </div>
       </header>

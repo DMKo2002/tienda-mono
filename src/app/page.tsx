@@ -69,43 +69,46 @@ export default async function HomePage() {
         {/* Proporciones del diseño: lienzo 1728×1117, columna izquierda 428px (24.77%), imagen 1300×975 (75.23% × 87.3%) */}
         <section className="relative bg-[var(--color-cream)] flex flex-col lg:grid lg:grid-cols-[24.77%_75.23%] lg:grid-rows-1 lg:aspect-[1728/1117]">
 
-            {/* Columna izquierda — logo del tenant, tagline y CTA (el grid la estira al 100% de la fila) */}
-            <div className="order-2 lg:order-1 w-full flex flex-col justify-between gap-10 px-8 py-12 lg:px-10 lg:py-16">
+            {/* Columna izquierda — el grid la estira al 100% de la fila; el contenido vive en un wrapper */}
+            {/* del 87.3% (975/1117) para que el botón quede a la misma altura que el borde inferior de la imagen */}
+            <div className="order-2 lg:order-1 w-full px-8 py-12 lg:px-10 lg:py-16 lg:h-full">
+              <div className="h-full lg:h-[87.3%] flex flex-col justify-between gap-10">
 
-              <div className="flex justify-center opacity-0 animate-fade-in delay-100">
-                {config?.logo_url ? (
-                  <img
-                    src={config.logo_url}
-                    alt={storeName}
-                    className="max-h-[180px] max-w-[200px] object-contain"
-                  />
-                ) : (
-                  <div className="w-[200px] max-w-full h-[180px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-[var(--color-stone)] text-center px-4">
-                      Logo de la tienda
-                    </span>
+                <div className="flex justify-center opacity-0 animate-fade-in delay-100">
+                  {config?.logo_url ? (
+                    <img
+                      src={config.logo_url}
+                      alt={storeName}
+                      className="max-h-[180px] max-w-[200px] object-contain"
+                    />
+                  ) : (
+                    <div className="w-[200px] max-w-full h-[180px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
+                      <span className="font-ui text-[10px] tracking-[0.15em] uppercase text-[var(--color-stone)] text-center px-4">
+                        Logo de la tienda
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="opacity-0 animate-fade-up delay-200">
+                  <p className="font-display text-lg leading-snug text-[var(--color-charcoal)] mb-8 whitespace-pre-line">
+                    {(config as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
+                  </p>
+
+                  <div className="flex items-center gap-5 flex-wrap font-ui">
+                    <Link
+                      href="/tienda"
+                      className="inline-flex items-center justify-center bg-[var(--color-charcoal)] text-white text-xs tracking-[0.15em] uppercase px-7 py-3 hover:opacity-90 transition-opacity"
+                    >
+                      Ver colección
+                    </Link>
+                    <Link
+                      href="/tienda"
+                      className="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] border-b border-[var(--color-charcoal)] pb-1 hover:text-[var(--color-stone)] hover:border-[var(--color-stone)] transition-colors"
+                    >
+                      Tienda <IconArrowMono />
+                    </Link>
                   </div>
-                )}
-              </div>
-
-              <div className="opacity-0 animate-fade-up delay-200">
-                <p className="font-display text-lg leading-snug text-[var(--color-charcoal)] mb-8 whitespace-pre-line">
-                  {(config as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
-                </p>
-
-                <div className="flex items-center gap-5 flex-wrap">
-                  <Link
-                    href="/tienda"
-                    className="inline-flex items-center justify-center bg-[var(--color-charcoal)] text-white text-xs tracking-[0.15em] uppercase px-7 py-3 hover:opacity-90 transition-opacity"
-                  >
-                    Ver colección
-                  </Link>
-                  <Link
-                    href="/tienda"
-                    className="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] border-b border-[var(--color-charcoal)] pb-1 hover:text-[var(--color-stone)] hover:border-[var(--color-stone)] transition-colors"
-                  >
-                    Tienda <IconArrowMono />
-                  </Link>
                 </div>
               </div>
             </div>
@@ -132,7 +135,7 @@ export default async function HomePage() {
                   return (
                     <div className="relative z-10 px-8 pb-14 lg:px-16 lg:pb-20 opacity-0 animate-fade-up delay-100">
                       <p
-                        className={`text-xs tracking-[0.25em] uppercase mb-4 ${!customColor ? defaultEyebrowClass : ''}`}
+                        className={`font-ui text-xs tracking-[0.25em] uppercase mb-4 ${!customColor ? defaultEyebrowClass : ''}`}
                         style={textStyle ? { color: customColor + 'B3' } : undefined}
                       >
                         {(config as any)?.hero_eyebrow ?? 'Opening New Season Summer 2026'}
