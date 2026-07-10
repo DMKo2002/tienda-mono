@@ -157,6 +157,59 @@ export default async function HomePage() {
 
         </section>
 
+        {/* ── MOSAICO DE FOTOS (Frame 2) ────────────────────────── */}
+        {/* 864×1117 grande a la izquierda + 864×559 arriba der. + 2× 432×559 abajo der. */}
+        <section className="w-full grid grid-cols-2 lg:grid-rows-1 lg:aspect-[1728/1117]">
+          <div className="relative aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#DDD5C8]">
+            {asset('gallery_1') && (
+              <Image
+                src={asset('gallery_1')!.split('?')[0]}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 50vw, 50vw"
+              />
+            )}
+          </div>
+          <div className="flex flex-col">
+            <div className="relative flex-1 aspect-[3/2] lg:aspect-auto overflow-hidden bg-[#C8CDD5]">
+              {asset('gallery_2') && (
+                <Image
+                  src={asset('gallery_2')!.split('?')[0]}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="50vw"
+                />
+              )}
+            </div>
+            <div className="flex flex-1">
+              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#C8D5CC]">
+                {asset('gallery_3') && (
+                  <Image
+                    src={asset('gallery_3')!.split('?')[0]}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="25vw"
+                  />
+                )}
+              </div>
+              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#D5C8CE]">
+                {asset('gallery_4') && (
+                  <Image
+                    src={asset('gallery_4')!.split('?')[0]}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="25vw"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── TRUST BADGES ─────────────────────────────────────── */}
         <section className="w-full px-6 py-14 border-b border-[var(--color-border)]">
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
