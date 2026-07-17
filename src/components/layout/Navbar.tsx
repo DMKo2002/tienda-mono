@@ -60,7 +60,9 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
 
           {/* Izquierda — marca. En este diseño el nombre de texto (header) y el isotipo (LOGO del hero) */}
           {/* son dos elementos independientes — el header siempre muestra el nombre, no lo reemplaza el logo */}
-          <div className="flex items-center">
+          {/* lg:w-[24.77%] + justify-center: centra el nombre dentro del mismo ancho que ocupa la columna */}
+          {/* izquierda del hero, para que quede alineado con el logo que se muestra ahí debajo */}
+          <div className="flex items-center lg:w-[24.77%] lg:justify-center">
             <Link href="/">
               <span className="font-display text-xl font-semibold text-[var(--color-charcoal)]">
                 {storeName}
