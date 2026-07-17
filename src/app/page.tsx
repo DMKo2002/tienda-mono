@@ -5,6 +5,7 @@ import { createServerSupabase, TENANT_ID } from '@/lib/supabase-server'
 export const dynamic = 'force-dynamic'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import ScrollReveal from '@/components/layout/ScrollReveal'
 import ProductCard from '@/components/shop/ProductCard'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -159,7 +160,7 @@ export default async function HomePage() {
         {/* ── MOSAICO DE FOTOS (Frame 2) ────────────────────────── */}
         {/* 864×1117 grande a la izquierda + 864×559 arriba der. + 2× 432×559 abajo der. */}
         <section className="w-full grid grid-cols-2 lg:grid-rows-1 lg:aspect-[1728/1117]">
-          <div className="relative aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+          <ScrollReveal className="relative aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
             {asset('gallery_1') && (
               <Image
                 src={asset('gallery_1')!.split('?')[0]}
@@ -169,9 +170,9 @@ export default async function HomePage() {
                 sizes="(max-width: 1024px) 50vw, 50vw"
               />
             )}
-          </div>
+          </ScrollReveal>
           <div className="flex flex-col">
-            <div className="relative flex-1 aspect-[3/2] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+            <ScrollReveal delay={100} className="relative flex-1 aspect-[3/2] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
               {asset('gallery_2') && (
                 <Image
                   src={asset('gallery_2')!.split('?')[0]}
@@ -181,9 +182,9 @@ export default async function HomePage() {
                   sizes="50vw"
                 />
               )}
-            </div>
+            </ScrollReveal>
             <div className="flex flex-1">
-              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+              <ScrollReveal delay={200} className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
                 {asset('gallery_3') && (
                   <Image
                     src={asset('gallery_3')!.split('?')[0]}
@@ -193,8 +194,8 @@ export default async function HomePage() {
                     sizes="25vw"
                   />
                 )}
-              </div>
-              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+              </ScrollReveal>
+              <ScrollReveal delay={300} className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF] img-hover-zoom">
                 {asset('gallery_4') && (
                   <Image
                     src={asset('gallery_4')!.split('?')[0]}
@@ -204,7 +205,7 @@ export default async function HomePage() {
                     sizes="25vw"
                   />
                 )}
-              </div>
+              </ScrollReveal>
             </div>
           </div>
         </section>
@@ -325,7 +326,7 @@ export default async function HomePage() {
 
         {/* ── MOODBOARD (Frame 4 del diseño): franja panorámica + 2 fotos ── */}
         <section className="w-full">
-          <div className="relative w-full aspect-[1728/200] overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+          <ScrollReveal className="relative w-full aspect-[1728/200] overflow-hidden bg-[#FFFFFF] img-hover-zoom">
             {asset('moodboard_banner') && (
               <Image
                 src={asset('moodboard_banner')!.split('?')[0]}
@@ -339,9 +340,9 @@ export default async function HomePage() {
             <p className="absolute left-6 md:left-[88px] top-1/2 -translate-y-1/2 max-w-[85%] font-display text-lg md:text-3xl font-semibold text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.5)]">
               Countless Attractive Offers Are Waiting For You
             </p>
-          </div>
+          </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="relative aspect-[860/573] overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+            <ScrollReveal delay={100} className="relative aspect-[860/573] overflow-hidden bg-[#FFFFFF] img-hover-zoom">
               {asset('moodboard_left') && (
                 <Image
                   src={asset('moodboard_left')!.split('?')[0]}
@@ -351,8 +352,8 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               )}
-            </div>
-            <div className="relative aspect-[860/573] overflow-hidden bg-[#FFFFFF] img-hover-zoom">
+            </ScrollReveal>
+            <ScrollReveal delay={200} className="relative aspect-[860/573] overflow-hidden bg-[#FFFFFF] img-hover-zoom">
               {asset('moodboard_right') && (
                 <Image
                   src={asset('moodboard_right')!.split('?')[0]}
@@ -362,7 +363,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               )}
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
