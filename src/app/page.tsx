@@ -8,7 +8,7 @@ import Footer from '@/components/layout/Footer'
 import ProductCard from '@/components/shop/ProductCard'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Truck, RotateCcw, Headset } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { IconArrowMono } from '@/components/icons/SocialIcons'
 
 export default async function HomePage() {
@@ -80,10 +80,10 @@ export default async function HomePage() {
                     <img
                       src={config.logo_url}
                       alt={storeName}
-                      className="max-h-[180px] max-w-[200px] object-contain"
+                      className="w-[150px] max-w-full h-auto object-contain"
                     />
                   ) : (
-                    <div className="w-[200px] max-w-full h-[180px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
+                    <div className="w-[150px] max-w-full h-[135px] border border-dashed border-[var(--color-charcoal)]/30 flex items-center justify-center">
                       <span className="font-ui text-[10px] tracking-[0.15em] uppercase text-[var(--color-stone)] text-center px-4">
                         Logo de la tienda
                       </span>
@@ -117,7 +117,7 @@ export default async function HomePage() {
             {/* Columna derecha — celda del grid al 100% de la fila; la imagen ocupa 87.3% de esa altura, alineada arriba */}
             <div className="order-1 lg:order-2 w-full">
               <div
-                className="relative w-full aspect-[4/5] lg:aspect-auto lg:h-[87.3%] flex items-end overflow-hidden bg-[#EDE8E1]"
+                className="relative w-full aspect-[4/5] lg:aspect-auto lg:h-[87.3%] flex items-end overflow-hidden bg-[#FFFFFF]"
                 style={config?.hero_image_url ? {
                   backgroundImage: `url(${config.hero_image_url})`,
                   backgroundSize: 'cover',
@@ -160,7 +160,7 @@ export default async function HomePage() {
         {/* ── MOSAICO DE FOTOS (Frame 2) ────────────────────────── */}
         {/* 864×1117 grande a la izquierda + 864×559 arriba der. + 2× 432×559 abajo der. */}
         <section className="w-full grid grid-cols-2 lg:grid-rows-1 lg:aspect-[1728/1117]">
-          <div className="relative aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#DDD5C8]">
+          <div className="relative aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF]">
             {asset('gallery_1') && (
               <Image
                 src={asset('gallery_1')!.split('?')[0]}
@@ -172,7 +172,7 @@ export default async function HomePage() {
             )}
           </div>
           <div className="flex flex-col">
-            <div className="relative flex-1 aspect-[3/2] lg:aspect-auto overflow-hidden bg-[#C8CDD5]">
+            <div className="relative flex-1 aspect-[3/2] lg:aspect-auto overflow-hidden bg-[#FFFFFF]">
               {asset('gallery_2') && (
                 <Image
                   src={asset('gallery_2')!.split('?')[0]}
@@ -184,7 +184,7 @@ export default async function HomePage() {
               )}
             </div>
             <div className="flex flex-1">
-              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#C8D5CC]">
+              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF]">
                 {asset('gallery_3') && (
                   <Image
                     src={asset('gallery_3')!.split('?')[0]}
@@ -195,7 +195,7 @@ export default async function HomePage() {
                   />
                 )}
               </div>
-              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#D5C8CE]">
+              <div className="relative flex-1 aspect-[3/4] lg:aspect-auto overflow-hidden bg-[#FFFFFF]">
                 {asset('gallery_4') && (
                   <Image
                     src={asset('gallery_4')!.split('?')[0]}
@@ -210,21 +210,19 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ── TRUST BADGES ─────────────────────────────────────── */}
-        <section className="w-full px-6 py-14 border-b border-[var(--color-border)]">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+        {/* ── FEATURES BAR (clonado de tienda-atelier) ─────────── */}
+        <section className="max-w-7xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
-              { icon: Truck, title: 'Envío gratis', text: 'En compras que superen el monto mínimo. Entrega rápida y segura a todo el país.' },
-              { icon: RotateCcw, title: 'Devoluciones', text: 'Tenés 14 días para devolver o cambiar tu pedido si no quedás satisfecho.' },
-              { icon: Headset, title: 'Atención al cliente', text: 'Estamos disponibles para ayudarte en todo momento por WhatsApp y email.' },
-            ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="flex items-start gap-4">
-                <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[var(--color-cream)] text-[var(--color-charcoal)]">
-                  <Icon size={18} strokeWidth={1.25} />
-                </div>
+              { title: 'Envío a todo el país', desc: 'En compras que superen el monto mínimo. Entrega rápida y segura a todo el país.' },
+              { title: 'Compra Segura', desc: 'Garantizamos una experiencia de compra segura de principio a fin.' },
+              { title: 'Atención al cliente', desc: 'Estamos disponibles para ayudarte en todo momento por WhatsApp e email.' },
+            ].map((feat, i) => (
+              <div key={i} className="flex gap-4 items-start">
+                <div className="w-11 h-11 bg-[#F5F5F5] flex-shrink-0" />
                 <div>
-                  <p className="text-xs font-medium tracking-[0.1em] uppercase text-[var(--color-charcoal)] mb-1">{title}</p>
-                  <p className="text-xs text-[var(--color-stone)] leading-relaxed">{text}</p>
+                  <h3 className="font-bold text-sm text-[var(--color-charcoal)] mb-1.5">{feat.title}</h3>
+                  <p className="text-xs leading-relaxed text-[#E07B39]">{feat.desc}</p>
                 </div>
               </div>
             ))}
@@ -234,17 +232,17 @@ export default async function HomePage() {
         {/* ── NEW ARRIVALS ──────────────────────────────────────── */}
         {products && products.length > 0 && (
           <section className="w-full px-6 py-24 text-center">
-            <h2 className="font-display text-4xl font-semibold text-[var(--color-charcoal)] mb-2">
+            <h2 className="font-display text-4xl font-bold text-[var(--color-charcoal)] mb-2">
               New Arrivals
             </h2>
-            <p className="text-sm text-[var(--color-stone)] mb-10">
+            <p className="font-ui text-base text-[var(--color-charcoal)] mb-10">
               {(config as any)?.hero_eyebrow ?? 'Opening New Season - Summer 2026'}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
               {products.slice(0, 4).map((product: any) => {
                 const cover = product.product_images?.find((img: any) => img.is_cover) ?? product.product_images?.[0]
                 return (
-                  <Link key={product.id} href={`/tienda/${product.slug}`} className="product-img-wrap block aspect-[2/3] relative bg-[#F2EEE9] overflow-hidden">
+                  <Link key={product.id} href={`/tienda/${product.slug}`} className="product-img-wrap block aspect-[2/3] relative bg-[#FFFFFF] overflow-hidden">
                     {cover?.url && (
                       <Image
                         src={cover.url.split('?')[0]}
@@ -342,41 +340,46 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ── MOODBOARD ────────────────────────────────────────── */}
-        <section className="w-full px-6 py-24">
-          <div className="mb-10">
-            <p className="text-xs tracking-[0.2em] uppercase text-[var(--color-stone)] mb-2">Instagram</p>
-            <h2 className="font-display text-3xl font-light text-[var(--color-charcoal)]">MoodBoard</h2>
-            <p className="text-sm text-[var(--color-stone)] mt-2 font-light">
-              Descubrí nuestras selecciones diseñadas para destacar, redefiniendo la elegancia contemporánea
+        {/* ── MOODBOARD (Frame 4 del diseño): franja panorámica + 2 fotos ── */}
+        <section className="w-full">
+          <div className="relative w-full aspect-[1728/200] overflow-hidden bg-[#FFFFFF]">
+            {asset('moodboard_banner') && (
+              <Image
+                src={asset('moodboard_banner')!.split('?')[0]}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            )}
+            <div className="absolute inset-0 bg-black/10" />
+            <p className="absolute left-6 md:left-[88px] top-1/2 -translate-y-1/2 max-w-[85%] font-display text-lg md:text-3xl font-semibold text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.5)]">
+              Countless Attractive Offers Are Waiting For You
             </p>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {['#DDD5C8', '#C8CDD5', '#C8D5CC', '#D5C8CE'].map((bg, i) => {
-              const imgUrl = asset(`moodboard_${i + 1}`)
-              return (
-                <div
-                  key={i}
-                  className="aspect-square overflow-hidden opacity-0 animate-fade-up relative"
-                  style={{
-                    backgroundColor: bg,
-                    animationDelay: `${i * 100}ms`,
-                    animationFillMode: 'forwards'
-                  }}
-                >
-                  {imgUrl && (
-                    <Image
-                      src={imgUrl.split('?')[0]}
-                      alt={`Mood ${i + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                    />
-                  )}
-                </div>
-              )
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="relative aspect-[860/573] overflow-hidden bg-[#FFFFFF]">
+              {asset('moodboard_left') && (
+                <Image
+                  src={asset('moodboard_left')!.split('?')[0]}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              )}
+            </div>
+            <div className="relative aspect-[860/573] overflow-hidden bg-[#FFFFFF]">
+              {asset('moodboard_right') && (
+                <Image
+                  src={asset('moodboard_right')!.split('?')[0]}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              )}
+            </div>
           </div>
         </section>
 
