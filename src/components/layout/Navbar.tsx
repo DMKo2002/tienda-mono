@@ -56,7 +56,7 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'bg-[var(--color-warm-white)] border-b border-[var(--color-border)] py-3' : 'bg-transparent py-6'
       }`}>
-        <div className="relative max-w-7xl mx-auto px-6 lg:max-w-none lg:mx-0 lg:px-10 flex items-center justify-between">
+        <div className="relative max-w-7xl mx-auto px-6 lg:max-w-none lg:mx-0 lg:px-0 flex items-center justify-between">
 
           {/* Izquierda — marca. En este diseño el nombre de texto (header) y el isotipo (LOGO del hero) */}
           {/* son dos elementos independientes — el header siempre muestra el nombre, no lo reemplaza el logo */}
@@ -89,7 +89,7 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
           </nav>
 
           {/* Derecha — íconos */}
-          <div className="hidden lg:flex items-center gap-5">
+          <div className="hidden lg:flex items-center gap-5 lg:pr-12">
             {(instagramUrl || facebookUrl || tiktokUrl) && (
               <>
                 <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
