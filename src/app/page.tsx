@@ -324,22 +324,6 @@ export default async function HomePage() {
 
         </section>
 
-        {/* ── BANNER INTERMEDIO ────────────────────────────────── */}
-        <section className="bg-[var(--color-charcoal)] py-24 px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xs tracking-[0.3em] uppercase text-white/40 mb-6">Los Destacados</p>
-            <h2 className="font-display text-5xl md:text-6xl font-light italic text-white leading-tight mb-8">
-              Conocé productos especialmente<br />elegidos para vos
-            </h2>
-            <Link
-              href="/tienda"
-              className="inline-flex items-center gap-3 text-xs tracking-[0.2em] uppercase text-white border-b border-white/30 pb-1 hover:border-white transition-colors"
-            >
-              Shop now <ArrowRight size={13} />
-            </Link>
-          </div>
-        </section>
-
         {/* ── MOODBOARD (Frame 4 del diseño): franja panorámica + 2 fotos ── */}
         <section className="w-full">
           <div className="relative w-full aspect-[1728/200] overflow-hidden bg-[#FFFFFF]">

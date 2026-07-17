@@ -74,7 +74,7 @@ export default function Footer({
               <img
                 src={logoUrl}
                 alt={storeName}
-                className="max-h-10 w-auto object-contain mb-4"
+                className="max-h-20 w-auto object-contain mb-4"
               />
             ) : (
               <p className="font-display text-2xl font-light tracking-[0.2em] uppercase text-[var(--color-charcoal)] mb-4">
