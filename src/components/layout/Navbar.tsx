@@ -56,11 +56,11 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'bg-[var(--color-warm-white)] border-b border-[var(--color-border)] py-3' : 'bg-transparent py-6'
       }`}>
-        <div className="max-w-7xl mx-auto px-6 lg:max-w-none lg:mx-0 lg:px-0 flex items-center lg:grid lg:grid-cols-[24.77%_75.23%]">
+        <div className="relative max-w-7xl mx-auto px-6 lg:max-w-none lg:mx-0 lg:px-10 flex items-center justify-between">
 
           {/* Izquierda — marca. En este diseño el nombre de texto (header) y el isotipo (LOGO del hero) */}
           {/* son dos elementos independientes — el header siempre muestra el nombre, no lo reemplaza el logo */}
-          <div className="flex-1 lg:flex-none flex justify-start lg:justify-center lg:px-10">
+          <div className="flex items-center">
             <Link href="/">
               <span className="font-display text-xl font-semibold text-[var(--color-charcoal)]">
                 {storeName}
@@ -68,61 +68,60 @@ export default function Navbar({ storeName = 'TIENDA', logoUrl, instagramUrl, fa
             </Link>
           </div>
 
-          {/* Derecha — nav centrado + íconos (ocupa la columna del ancho de la imagen del hero) */}
-          <div className="hidden lg:flex items-center lg:pl-10 lg:pr-12">
-            <nav className="flex-1 flex items-center justify-center gap-8 font-ui">
-              <Link href="/" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-                Home
-              </Link>
-              <Link
-                href="/tienda"
-                onMouseEnter={open}
-                onMouseLeave={close}
-                className={`text-xs tracking-[0.15em] uppercase transition-colors ${megaOpen ? 'text-[var(--color-stone)]' : 'text-[var(--color-charcoal)] hover:text-[var(--color-stone)]'}`}
-              >
-                Tienda
-              </Link>
-              <Link href="/contacto" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-                Contacto
-              </Link>
-            </nav>
+          {/* Centro — nav, centrado respecto a todo el ancho de la pantalla (no de una columna) */}
+          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-8 font-ui">
+            <Link href="/" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+              Home
+            </Link>
+            <Link
+              href="/tienda"
+              onMouseEnter={open}
+              onMouseLeave={close}
+              className={`text-xs tracking-[0.15em] uppercase transition-colors ${megaOpen ? 'text-[var(--color-stone)]' : 'text-[var(--color-charcoal)] hover:text-[var(--color-stone)]'}`}
+            >
+              Tienda
+            </Link>
+            <Link href="/contacto" className="text-xs tracking-[0.15em] uppercase text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+              Contacto
+            </Link>
+          </nav>
 
-            <div className="flex items-center gap-5">
-              {(instagramUrl || facebookUrl || tiktokUrl) && (
-                <>
-                  <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
-                    {instagramUrl && (
-                      <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[var(--color-stone)] transition-colors">
-                        <IconInstagram />
-                      </a>
-                    )}
-                    {facebookUrl && (
-                      <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[var(--color-stone)] transition-colors">
-                        <IconFacebook />
-                      </a>
-                    )}
-                    {tiktokUrl && (
-                      <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[var(--color-stone)] transition-colors">
-                        <IconTikTok />
-                      </a>
-                    )}
-                  </div>
-                  <span className="w-px h-4 bg-[var(--color-charcoal)]/25" aria-hidden />
-                </>
+          {/* Derecha — íconos */}
+          <div className="hidden lg:flex items-center gap-5">
+            {(instagramUrl || facebookUrl || tiktokUrl) && (
+              <>
+                <div className="flex items-center gap-3 text-[var(--color-charcoal)]">
+                  {instagramUrl && (
+                    <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[var(--color-stone)] transition-colors">
+                      <IconInstagram />
+                    </a>
+                  )}
+                  {facebookUrl && (
+                    <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[var(--color-stone)] transition-colors">
+                      <IconFacebook />
+                    </a>
+                  )}
+                  {tiktokUrl && (
+                    <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[var(--color-stone)] transition-colors">
+                      <IconTikTok />
+                    </a>
+                  )}
+                </div>
+                <span className="w-px h-4 bg-[var(--color-charcoal)]/25" aria-hidden />
+              </>
+            )}
+
+            <Link href="/cuenta" className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors" title="Mi cuenta">
+              <IconUserMono />
+            </Link>
+            <Link href="/carrito" className="relative text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
+              <IconCartMono />
+              {count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
+                  {count}
+                </span>
               )}
-
-              <Link href="/cuenta" className="text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors" title="Mi cuenta">
-                <IconUserMono />
-              </Link>
-              <Link href="/carrito" className="relative text-[var(--color-charcoal)] hover:text-[var(--color-stone)] transition-colors">
-                <IconCartMono />
-                {count > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-charcoal)] text-white text-[9px] rounded-full flex items-center justify-center">
-                    {count}
-                  </span>
-                )}
-              </Link>
-            </div>
+            </Link>
           </div>
 
           {/* Mobile hamburger */}
