@@ -71,11 +71,13 @@ export default function Footer({
           {/* Marca + social */}
           <div className="md:col-span-1">
             {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt={storeName}
-                className="max-h-20 w-auto object-contain mb-4"
-              />
+              <a href="https://www.gounuri.com" target="_blank" rel="noopener noreferrer" className="inline-block mb-4">
+                <img
+                  src={logoUrl}
+                  alt={storeName}
+                  className="max-h-20 w-auto object-contain"
+                />
+              </a>
             ) : (
               <p className="font-display text-2xl font-light tracking-[0.2em] uppercase text-[var(--color-charcoal)] mb-4">
                 {storeName}
@@ -171,7 +173,7 @@ export default function Footer({
             <a href="/politica-privacidad" className="text-[10px] tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] transition-colors">Privacidad</a>
             <a href="/politica-cookies" className="text-[10px] tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] transition-colors">Cookies</a>
             <a href="/terminos-condiciones" className="text-[10px] tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] transition-colors">Términos</a>
-            <p className="text-[10px] tracking-widest uppercase text-[var(--color-stone)]">Desarrollado por gounuri</p>
+            <a href="https://www.gounuri.com" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] transition-colors">Desarrollado por gounuri</a>
           </div>
         </div>
       </div>
