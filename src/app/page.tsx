@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import { createServerSupabase, TENANT_ID } from '@/lib/supabase-server'
 
 // Siempre SSR fresco — sin esto Next.js cachea la página y los cambios del panel no se ven
@@ -6,17 +5,12 @@ export const dynamic = 'force-dynamic'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ScrollReveal from '@/components/layout/ScrollReveal'
-import ProductCard from '@/components/shop/ProductCard'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { IconArrowMono } from '@/components/icons/SocialIcons'
 
 export default async function HomePage() {
-  // cookies() debe llamarse ANTES de cualquier await
-  const cookieStore = cookies()
-  const isLoggedIn = cookieStore.getAll().some(c => c.name.includes('-auth-token') && c.value.length > 10)
-
   const supabase = await createServerSupabase()
 
   // Datos de la tienda
@@ -44,15 +38,13 @@ export default async function HomePage() {
   // Productos destacados (últimos 4)
   const { data: products } = await supabase
     .from('products')
-    .select('id, name, slug, product_images(*), variants(price_rules(*))')
+    .select('id, name, slug, product_images(*)')
     .eq('tenant_id', TENANT_ID())
     .eq('active', true)
     .order('created_at', { ascending: false })
     .limit(4)
 
   const storeName = tenant?.name ?? 'TIENDA'
-  const priceVisibility = (config as any)?.price_visibility ?? 'all'
-  const showPrices = priceVisibility === 'all' || (priceVisibility === 'logged_in' && isLoggedIn)
 
   return (
     <>
@@ -258,71 +250,6 @@ export default async function HomePage() {
             </div>
           </section>
         )}
-
-        {/* ── FEATURED COLLECTION ──────────────────────────────── */}
-        <section className="w-full px-6 py-24">
-
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <p className="text-xs tracking-[0.2em] uppercase text-[var(--color-stone)] mb-2">
-                Selección
-              </p>
-              <h2 className="font-display text-4xl font-light text-[var(--color-charcoal)]">
-                Featured Collection
-              </h2>
-            </div>
-            <Link
-              href="/tienda"
-              className="hidden md:inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-stone)] hover:text-[var(--color-charcoal)] transition-colors"
-            >
-              Ver todo <ArrowRight size={13} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {products?.map((product: any, i: number) => {
-              const cover = product.product_images?.find((img: any) => img.is_cover) ?? product.product_images?.[0]
-              const retailPrice = product.variants?.[0]?.price_rules?.find((p: any) => p.type === 'retail' && p.active)?.price
-              const wholesalePrice = product.variants?.[0]?.price_rules?.find((p: any) => p.type === 'wholesale' && p.active)?.price
-
-              const colors = [...new Set((product.variants ?? []).map((v: any) => v.color).filter(Boolean))] as string[]
-              const sizes = [...new Set((product.variants ?? []).map((v: any) => v.size).filter(Boolean))] as string[]
-
-              return (
-                <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  name={product.name}
-                  slug={product.slug}
-                  coverUrl={cover?.url}
-                  retailPrice={retailPrice}
-                  wholesalePrice={wholesalePrice}
-                  showPrices={showPrices}
-                  priceVisibility={priceVisibility}
-                  colors={colors}
-                  sizes={sizes}
-                  index={i}
-                />
-              )
-            })}
-
-            {(!products || products.length === 0) && (
-              <div className="col-span-4 py-20 text-center">
-                <p className="text-[var(--color-stone)] font-light">
-                  Los productos se mostrarán aquí
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile ver todo */}
-          <div className="mt-10 text-center md:hidden">
-            <Link href="/tienda" className="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-[var(--color-stone)]">
-              Ver todos los productos <ArrowRight size={13} />
-            </Link>
-          </div>
-
-        </section>
 
         {/* ── MOODBOARD (Frame 4 del diseño): franja panorámica + 2 fotos ── */}
         <section className="w-full">
