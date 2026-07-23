@@ -1,4 +1,4 @@
-import { createServerSupabase, TENANT_ID } from '@/lib/supabase-server'
+import { createServerSupabase, createServiceSupabase, TENANT_ID } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -88,6 +88,9 @@ export default async function ProductoPage({ params }: Props) {
   const priceVisibility = (config as any)?.price_visibility ?? 'all'
   const ignoreStock = Boolean((config as any)?.ignore_stock)
   let showPrices = priceVisibility === 'all'
+  // Controla si se busca/muestra el precio mayorista (independiente de
+  // showPrices, que solo dice si se muestra ALGUN precio).
+  let isWholesaleUser = priceVisibility === 'all'
   if (priceVisibility !== 'all') {
     try {
       const { data: sessionData } = await supabase.auth.getSession()
@@ -95,17 +98,27 @@ export default async function ProductoPage({ params }: Props) {
       if (user) {
         if (priceVisibility === 'logged_in') {
           showPrices = true
-        } else if (priceVisibility === 'wholesale_only') {
-          // auth_user_id (no email): el mail de Auth puede ser "disfrazado" por
-          // tienda (ver lib/auth-email.ts) y ya no coincide con customers.email
-          // para cuentas nuevas.
-          const { data: customer } = await supabase
+          // Service client bypasea RLS. Usar auth_user_id (no email): el mail
+          // de Auth puede ser "disfrazado" por tienda (ver lib/auth-email.ts)
+          // y ya no coincide con customers.email para cuentas nuevas.
+          const service = createServiceSupabase()
+          const { data: customer } = await service
             .from('customers')
             .select('type')
             .eq('auth_user_id', user.id)
             .eq('tenant_id', TENANT_ID())
-            .single()
+            .maybeSingle()
+          isWholesaleUser = customer?.type === 'wholesale'
+        } else if (priceVisibility === 'wholesale_only') {
+          const service = createServiceSupabase()
+          const { data: customer } = await service
+            .from('customers')
+            .select('type')
+            .eq('auth_user_id', user.id)
+            .eq('tenant_id', TENANT_ID())
+            .maybeSingle()
           showPrices = customer?.type === 'wholesale'
+          isWholesaleUser = customer?.type === 'wholesale'
         }
       }
     } catch { showPrices = false }
@@ -215,6 +228,7 @@ export default async function ProductoPage({ params }: Props) {
                 sizes={sizes as string[]}
                 colors={colors as string[]}
                 showPrices={showPrices}
+                isWholesale={isWholesaleUser}
                 ignoreStock={ignoreStock}
                 minQty={(product as any).min_qty ?? (config as any)?.min_qty_per_variant ?? 1}
               />
