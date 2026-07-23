@@ -275,7 +275,7 @@ export default async function TiendaPage({ searchParams }: Props) {
       <main className="pt-28">
 
         {/* Header de la sección */}
-        <div className="max-w-7xl mx-auto px-6 pb-8 border-b border-[var(--color-border)]">
+        <div className="max-w-[1600px] mx-auto px-6 pb-8 border-b border-[var(--color-border)]">
           <div className="flex items-end justify-between">
             <div>
               <p className="text-xs tracking-[0.2em] uppercase text-[var(--color-stone)] mb-1">Colección</p>
@@ -287,7 +287,7 @@ export default async function TiendaPage({ searchParams }: Props) {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-[1600px] mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row gap-12">
 
             {/* Sidebar filtros — solo desktop */}
@@ -327,7 +327,7 @@ export default async function TiendaPage({ searchParams }: Props) {
                 currentDescuento={soloDescuento}
                 activeFilterCount={[searchParams.cat, searchParams.color, searchParams.talle, searchParams.precio_min, searchParams.precio_max, searchParams.descuento, searchParams.q].filter(Boolean).length}
               />
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
                 {products.map((product: any, i: number) => (
                   <ProductCard
                     key={product.id}
