@@ -327,7 +327,7 @@ export default async function TiendaPage({ searchParams }: Props) {
                 currentDescuento={soloDescuento}
                 activeFilterCount={[searchParams.cat, searchParams.color, searchParams.talle, searchParams.precio_min, searchParams.precio_max, searchParams.descuento, searchParams.q].filter(Boolean).length}
               />
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
                 {products.map((product: any, i: number) => (
                   <ProductCard
                     key={product.id}
