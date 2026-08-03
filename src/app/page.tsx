@@ -17,6 +17,14 @@ export default async function HomePage() {
   // Datos de la tienda
   const { tenant, config } = await getStoreData(supabase, TENANT_ID())
 
+  // Apariencia de ESTA plantilla (hero): propia de Mono, no vive en
+  // tienda-core — así cada template queda intercambiable a futuro.
+  const { data: appearance } = await supabase
+    .from('store_config')
+    .select('hero_subtitle, hero_image_url, hero_text_color, hero_eyebrow, hero_title_line1, hero_title_italic, hero_title_line3')
+    .eq('tenant_id', TENANT_ID())
+    .single()
+
   // Imágenes configurables desde panel Personalización
   const { data: assetsRows } = await supabase
     .from('store_assets')
@@ -77,7 +85,7 @@ export default async function HomePage() {
 
                 <div className="opacity-0 animate-fade-up delay-200">
                   <p className="font-display text-lg leading-snug text-[var(--color-charcoal)] mb-8 whitespace-pre-line">
-                    {(config as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
+                    {(appearance as any)?.hero_subtitle ?? 'Piezas únicas diseñadas para\nquienes buscan estilo y distinción.'}
                   </p>
 
                   <div className="flex items-center gap-5 flex-wrap font-ui">
@@ -101,36 +109,36 @@ export default async function HomePage() {
             {/* Columna derecha — celda del grid al 100% de la fila; la imagen ocupa 87.3% de esa altura, alineada arriba */}
             <div className="order-1 lg:order-2 w-full">
               <div className="group relative w-full aspect-[4/5] lg:aspect-auto lg:h-[87.3%] flex items-end overflow-hidden bg-[#C3C2BB]">
-                {config?.hero_image_url && (
+                {(appearance as any)?.hero_image_url && (
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                    style={{ backgroundImage: `url(${config.hero_image_url})` }}
+                    style={{ backgroundImage: `url(${(appearance as any).hero_image_url})` }}
                   />
                 )}
-                {config?.hero_image_url && (
+                {(appearance as any)?.hero_image_url && (
                   <div className="absolute inset-0 bg-black/20" />
                 )}
 
                 {(() => {
-                  const customColor = (config as any)?.hero_text_color
+                  const customColor = (appearance as any)?.hero_text_color
                   const textStyle = customColor ? { color: customColor } : undefined
-                  const defaultEyebrowClass = config?.hero_image_url ? 'text-white/80' : 'text-[var(--color-stone)]'
-                  const defaultTitleClass   = config?.hero_image_url ? 'text-white'    : 'text-[var(--color-charcoal)]'
+                  const defaultEyebrowClass = (appearance as any)?.hero_image_url ? 'text-white/80' : 'text-[var(--color-stone)]'
+                  const defaultTitleClass   = (appearance as any)?.hero_image_url ? 'text-white'    : 'text-[var(--color-charcoal)]'
                   return (
                     <div className="relative z-10 px-8 pb-14 lg:px-16 lg:pb-20 opacity-0 animate-fade-up delay-100">
                       <p
                         className={`font-ui text-xs tracking-[0.25em] uppercase mb-4 ${!customColor ? defaultEyebrowClass : ''}`}
                         style={textStyle ? { color: customColor + 'B3' } : undefined}
                       >
-                        {(config as any)?.hero_eyebrow ?? 'Opening New Season Summer 2026'}
+                        {(appearance as any)?.hero_eyebrow ?? 'Opening New Season Summer 2026'}
                       </p>
                       <h1
                         className={`font-display text-5xl md:text-7xl font-semibold leading-[1.05] ${!customColor ? defaultTitleClass : ''}`}
                         style={textStyle}
                       >
-                        {(config as any)?.hero_title_line1 ?? 'Timeless Design'}<br />
-                        <em className="italic font-normal">{(config as any)?.hero_title_italic ?? 'Beyond Trends'}</em>
-                        {(config as any)?.hero_title_line3 && <><br />{(config as any).hero_title_line3}</>}
+                        {(appearance as any)?.hero_title_line1 ?? 'Timeless Design'}<br />
+                        <em className="italic font-normal">{(appearance as any)?.hero_title_italic ?? 'Beyond Trends'}</em>
+                        {(appearance as any)?.hero_title_line3 && <><br />{(appearance as any).hero_title_line3}</>}
                       </h1>
                     </div>
                   )
@@ -219,7 +227,7 @@ export default async function HomePage() {
               New Arrivals
             </h2>
             <p className="font-ui text-base text-[var(--color-charcoal)] mb-10">
-              {(config as any)?.hero_eyebrow ?? 'Opening New Season - Summer 2026'}
+              {(appearance as any)?.hero_eyebrow ?? 'Opening New Season - Summer 2026'}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
               {products.slice(0, 4).map((product: any) => {
