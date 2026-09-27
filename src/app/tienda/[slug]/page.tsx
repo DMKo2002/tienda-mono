@@ -12,18 +12,19 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props) {
+  const { slug } = await params
   const supabase = await createServerSupabase()
   const [{ data: tenantData }, { data }] = await Promise.all([
-    supabase.from('tenants').select('name').eq('id', TENANT_ID()).single(),
+    supabase.from('tenants').select('name').eq('id', await TENANT_ID()).single(),
     supabase
       .from('products')
       .select('name, description, product_images(url, is_cover, sort_order)')
-      .eq('tenant_id', TENANT_ID())
-      .eq('slug', params.slug)
+      .eq('tenant_id', await TENANT_ID())
+      .eq('slug', slug)
       .eq('active', true)
       .single(),
   ])
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: Props) {
   return {
     title,
     description,
-    alternates: { canonical: `/tienda/${params.slug}` },
+    alternates: { canonical: `/tienda/${slug}` },
     openGraph: {
       title,
       description,
@@ -65,15 +66,16 @@ const formatPrice = (n: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n)
 
 export default async function ProductoPage({ params }: Props) {
+  const { slug } = await params
   const supabase = await createServerSupabase()
 
-  const { tenant, config } = await getStoreData(supabase, TENANT_ID())
+  const { tenant, config } = await getStoreData(supabase, await TENANT_ID())
 
   const { data: product } = await supabase
     .from('products')
     .select('*, product_images(*), variants(*, price_rules(*))')
-    .eq('tenant_id', TENANT_ID())
-    .eq('slug', params.slug)
+    .eq('tenant_id', await TENANT_ID())
+    .eq('slug', slug)
     .eq('active', true)
     .single()
 
@@ -111,7 +113,7 @@ export default async function ProductoPage({ params }: Props) {
             .from('customers')
             .select('type')
             .eq('auth_user_id', user.id)
-            .eq('tenant_id', TENANT_ID())
+            .eq('tenant_id', await TENANT_ID())
             .maybeSingle()
           isWholesaleUser = customer?.type === 'wholesale'
         } else if (priceVisibility === 'wholesale_only') {
@@ -120,7 +122,7 @@ export default async function ProductoPage({ params }: Props) {
             .from('customers')
             .select('type')
             .eq('auth_user_id', user.id)
-            .eq('tenant_id', TENANT_ID())
+            .eq('tenant_id', await TENANT_ID())
             .maybeSingle()
           showPrices = customer?.type === 'wholesale'
           isWholesaleUser = customer?.type === 'wholesale'

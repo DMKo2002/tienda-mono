@@ -19,21 +19,21 @@ export default async function HomePage() {
   const supabase = await createServerSupabase()
 
   // Datos de la tienda
-  const { tenant, config } = await getStoreData(supabase, TENANT_ID())
+  const { tenant, config } = await getStoreData(supabase, await TENANT_ID())
 
   // Apariencia de ESTA plantilla (hero): propia de Mono, no vive en
   // tienda-core — así cada template queda intercambiable a futuro.
   const { data: appearance } = await supabase
     .from('store_config')
     .select('hero_subtitle, hero_image_url, hero_text_color, hero_eyebrow, hero_title_line1, hero_title_italic, hero_title_line3')
-    .eq('tenant_id', TENANT_ID())
+    .eq('tenant_id', await TENANT_ID())
     .single()
 
   // Imágenes configurables desde panel Personalización
   const { data: assetsRows } = await supabase
     .from('store_assets')
     .select('slot, url')
-    .eq('tenant_id', TENANT_ID())
+    .eq('tenant_id', await TENANT_ID())
 
   const asset = (slot: string): string | null =>
     assetsRows?.find(a => a.slot === slot)?.url ?? null
@@ -42,7 +42,7 @@ export default async function HomePage() {
   const { data: products } = await supabase
     .from('products')
     .select('id, name, slug, product_images(*)')
-    .eq('tenant_id', TENANT_ID())
+    .eq('tenant_id', await TENANT_ID())
     .eq('active', true)
     .order('sort_order', { ascending: true })
     .limit(4)
