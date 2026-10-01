@@ -114,9 +114,14 @@ export default async function HomePage() {
             <div className="order-1 lg:order-2 w-full">
               <div className="group relative w-full aspect-[4/5] lg:aspect-auto lg:h-[87.3%] flex items-end overflow-hidden bg-[#C3C2BB]">
                 {(appearance as any)?.hero_image_url && (
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                    style={{ backgroundImage: `url(${(appearance as any).hero_image_url})` }}
+                  <Image
+                    src={(appearance as any).hero_image_url}
+                    alt=""
+                    fill
+                    priority
+                    quality={90}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                   />
                 )}
                 {(appearance as any)?.hero_image_url && (
